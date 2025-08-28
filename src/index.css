@@ -98,18 +98,21 @@ ol {
   }
 }
 
-.editor-content ul {
+/* .editor-content ul {
   list-style-type: disc;
-    /* list-style-position: inside;  */
-    word-wrap: none;
-    border: 1px solid red;
+  list-style-position: outside;
+  padding-left: 1.5rem;
+  margin-left: 0;
+  word-break: normal;
+  border: none;
 }
 
 .editor-content ol {
   list-style-type: decimal;
-  padding-left: 2rem;
-  margin: 0.5rem 0;
-    /* list-style-position: inside;  */
+  list-style-position: outside;
+  padding-left: 1.5rem;
+  margin-left: 0;
+  word-break: normal;
 
 }
 
@@ -119,4 +122,55 @@ ol {
   text-align: inherit;
   margin: 0;
   padding: 0;
+} */
+
+/* new css */
+/* remove browser bullets */
+.editor-content ul,
+.editor-content ol {
+  list-style: none;
+  padding-left: 0;
+  margin: 0.5rem 0;
+}
+
+.editor-content ol {
+  counter-reset: list-counter;
+}
+
+.editor-content li {
+  margin: 0.25rem 0;
+  text-align: inherit; /* inherits alignment (left/center/right) */
+  display: flex;       /* flex use karo taaki marker + text ek row me ho */
+  gap: 0.5rem;         /* marker aur text ke beech space */
+  /* justify-content: flex-end; */
+}
+
+/* custom bullet */
+.editor-content ul li::before {
+  content: "•";
+  display: inline-block; 
+}
+
+/* custom number */
+.editor-content ol li::before {
+  counter-increment: list-counter;
+  content: counter(list-counter) ".";
+  display: inline-block;
+}
+/* left align */
+.editor-content li {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* alignment rules */
+/* alignment rules based on inline style */
+.editor-content li[style*="text-align: left"] {
+  justify-content: flex-start;
+}
+.editor-content li[style*="text-align: center"] {
+  justify-content: center;
+}
+.editor-content li[style*="text-align: right"] {
+  justify-content: flex-end;
 }

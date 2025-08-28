@@ -5,7 +5,6 @@ function MenuBar() {
   if (!editor) return null;
 
   const toggleList = (type) => {
-    if (!editor) return;
     if (type === "bullet") {
       editor.chain().focus().toggleBulletList().run();
     } else if (type === "ordered") {
@@ -35,22 +34,21 @@ function MenuBar() {
       </button>
 
       {/* Alignments */}
-      <button onClick={() => editor.chain().focus().setTextAlign("left").run()}>
+      <button
+        onClick={() => editor.chain().focus().setTextAlign("left").run()}
+        // className={editor.isActive({ textAlign: "left" }) ? "is-active" : ""}
+      >
         Left
       </button>
       <button
         onClick={() => editor.chain().focus().setTextAlign("center").run()}
+        // className={editor.isActive({ textAlign: "center" }) ? "is-active" : ""}
       >
         Center
       </button>
       <button
         onClick={() => editor.chain().focus().setTextAlign("right").run()}
         // className={editor.isActive({ textAlign: "right" }) ? "is-active" : ""}
-      >
-        Rightss
-      </button>
-      <button
-        onClick={() => editor.chain().focus().setTextAlign("right").run()}
       >
         Right
       </button>
