@@ -1,10 +1,17 @@
+import TextAlign from "@tiptap/extension-text-align";
 import { TextStyleKit } from "@tiptap/extension-text-style";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { useEffect } from "react";
 import { useEditors } from "../Providers/EditorProvider";
 
-const extensions = [TextStyleKit, StarterKit];
+const extensions = [
+  StarterKit,
+  TextStyleKit,
+  TextAlign.configure({
+    types: ["heading", "paragraph", "listItem", "bulletList", "orderedList"],
+  }),
+];
 
 const TiptapEditorComponent = ({ element, setElements }) => {
   const { registerEditor, unregisterEditor } = useEditors();
@@ -31,8 +38,7 @@ const TiptapEditorComponent = ({ element, setElements }) => {
   return (
     <EditorContent
       editor={editor}
-      style={{ width: "100%", height: "100%" }}
-      className="editor-content"
+      className="editor-content w-full z-10 relative"
     />
   );
 };

@@ -45,6 +45,12 @@ function MenuBar() {
       </button>
       <button
         onClick={() => editor.chain().focus().setTextAlign("right").run()}
+        // className={editor.isActive({ textAlign: "right" }) ? "is-active" : ""}
+      >
+        Rightss
+      </button>
+      <button
+        onClick={() => editor.chain().focus().setTextAlign("right").run()}
       >
         Right
       </button>

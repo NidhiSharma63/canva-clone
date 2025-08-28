@@ -25,6 +25,7 @@ export default function Canvas({ elements, onDropElement, setElements }) {
             transform: `rotate(${el.rotation || 0}deg)`,
             width: el.width,
             height: el.height,
+            textAlign: el.align,
           }}
           onClick={() => setSelectedId(el.id)}
         >
