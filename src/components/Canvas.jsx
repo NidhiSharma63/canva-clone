@@ -17,7 +17,13 @@ export default function Canvas({ elements, onDropElement, setElements }) {
           key={el.id}
           data-id={el.id}
           className="absolute cursor-pointer"
-          style={{ top: el.y, left: el.x }}
+          style={{
+            top: el.y,
+            left: el.x,
+            rotate: el.rotate,
+            width: el.width,
+            height: el.height,
+          }}
           onClick={() => setSelectedId(el.id)}
         >
           {el.type === "text" && <p className="text-black">Sample Text</p>}
@@ -45,6 +51,7 @@ export default function Canvas({ elements, onDropElement, setElements }) {
             );
           }}
           onResize={(e) => {
+            console.log(e);
             setElements((prev) =>
               prev.map((el) =>
                 el.id === selectedId
@@ -56,7 +63,7 @@ export default function Canvas({ elements, onDropElement, setElements }) {
           onRotate={(e) => {
             setElements((prev) =>
               prev.map((el) =>
-                el.id === selectedId ? { ...el, rotation: e.beforeRotate } : el
+                el.id === selectedId ? { ...el, rotation: e.rotation } : el
               )
             );
           }}
