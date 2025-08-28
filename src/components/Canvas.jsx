@@ -1,6 +1,8 @@
 import { useState } from "react";
 import Moveable from "react-moveable";
 
+import TiptapEditorComponent from "./TiptapEditorComponent";
+
 export default function Canvas({ elements, onDropElement, setElements }) {
   const [selectedId, setSelectedId] = useState(null);
 
@@ -8,7 +10,7 @@ export default function Canvas({ elements, onDropElement, setElements }) {
 
   return (
     <div
-      className="w-[800px] h-[90vh] m-auto bg-white relative border-2 border-amber-400"
+      className="w-[800px] h-[90vh] m-auto bg-white relative border-2 border-dashed border-amber-400"
       onDragOver={(e) => e.preventDefault()}
       onDrop={onDropElement}
     >
@@ -16,17 +18,23 @@ export default function Canvas({ elements, onDropElement, setElements }) {
         <div
           key={el.id}
           data-id={el.id}
-          className="absolute cursor-pointer"
+          className="relative cursor-pointer"
           style={{
             top: el.y,
             left: el.x,
-            rotate: el.rotate,
+            transform: `rotate(${el.rotation || 0}deg)`,
             width: el.width,
             height: el.height,
           }}
           onClick={() => setSelectedId(el.id)}
         >
-          {el.type === "text" && <p className="text-black">Sample Text</p>}
+          {el.type === "text" && (
+            <TiptapEditorComponent
+              element={el}
+              setElements={setElements}
+              selectedId={selectedId}
+            />
+          )}
           {el.type === "rectangle" && (
             <div
               className="bg-blue-400"
@@ -63,7 +71,7 @@ export default function Canvas({ elements, onDropElement, setElements }) {
           onRotate={(e) => {
             setElements((prev) =>
               prev.map((el) =>
-                el.id === selectedId ? { ...el, rotation: e.rotation } : el
+                el.id === selectedId ? { ...el, rotation: e.beforeRotate } : el
               )
             );
           }}

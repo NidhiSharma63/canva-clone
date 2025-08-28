@@ -1,11 +1,35 @@
 import { useEffect, useState } from "react";
 import Canvas from "./components/Canvas.jsx";
+import MenuBar from "./components/Menubar.jsx";
 import Sidebar from "./components/Sidebar.jsx";
+
+const dummyJson = [
+  {
+    id: "1",
+    type: "text",
+    x: 100,
+    y: 100,
+    rotation: 45,
+    width: 100,
+    height: 50,
+    background: "red",
+  },
+  {
+    id: "2",
+    type: "rectangle",
+    x: 200,
+    y: 200,
+    rotation: 45,
+    width: 100,
+    height: 50,
+    background: "red",
+  },
+];
 const App = () => {
   const [elements, setElements] = useState([]);
 
   useEffect(() => {
-    // JSON.stringify(elements);
+    console.log(elements);
     if (elements.length > 0) {
       localStorage.setItem("elements", JSON.stringify(elements));
     }
@@ -36,6 +60,10 @@ const App = () => {
       type,
       x,
       y,
+      content: "<p>Text</p>",
+      rotation: 0,
+      width: 100,
+      height: 50,
     };
 
     setElements((prev) => [...prev, newElement]);
@@ -43,11 +71,14 @@ const App = () => {
   return (
     <div className="flex h-screen">
       <Sidebar onDragStart={handleDragStart} />
-      <Canvas
-        elements={elements}
-        onDropElement={handleDrop}
-        setElements={setElements}
-      />
+      <div className="flex flex-col">
+        <MenuBar />
+        <Canvas
+          elements={elements}
+          onDropElement={handleDrop}
+          setElements={setElements}
+        />
+      </div>
     </div>
   );
 };
