@@ -6,7 +6,7 @@ const App = () => {
 
   useEffect(() => {
     console.log(elements, "elements");
-    JSON.stringify(elements);
+    // JSON.stringify(elements);
     if (elements.length > 0) {
       localStorage.setItem("elements", JSON.stringify(elements));
     }
@@ -44,7 +44,11 @@ const App = () => {
   return (
     <div className="flex h-screen">
       <Sidebar onDragStart={handleDragStart} />
-      <Canvas elements={elements} onDropElement={handleDrop} />
+      <Canvas
+        elements={elements}
+        onDropElement={handleDrop}
+        setElements={setElements}
+      />
     </div>
   );
 };

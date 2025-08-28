@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Moveable from "react-moveable";
 
-export default function Canvas({ elements, onDropElement }) {
+export default function Canvas({ elements, onDropElement, setElements }) {
   const [selectedId, setSelectedId] = useState(null);
 
   const selectedElement = elements.find((el) => el.id === selectedId);
@@ -37,15 +37,28 @@ export default function Canvas({ elements, onDropElement }) {
           resizable={true}
           rotatable={true}
           onDrag={(e) => {
-            selectedElement.x = e.left;
-            selectedElement.y = e.top;
+            console.log(e);
+            setElements((prev) =>
+              prev.map((el) =>
+                el.id === selectedId ? { ...el, x: e.left, y: e.top } : el
+              )
+            );
           }}
           onResize={(e) => {
-            selectedElement.width = e.width;
-            selectedElement.height = e.height;
+            setElements((prev) =>
+              prev.map((el) =>
+                el.id === selectedId
+                  ? { ...el, width: e.width, height: e.height }
+                  : el
+              )
+            );
           }}
           onRotate={(e) => {
-            selectedElement.rotation = e.beforeRotate;
+            setElements((prev) =>
+              prev.map((el) =>
+                el.id === selectedId ? { ...el, rotation: e.beforeRotate } : el
+              )
+            );
           }}
         />
       )}
