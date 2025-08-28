@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Moveable from "react-moveable";
-
 import TiptapEditorComponent from "./TiptapEditorComponent";
 
 export default function Canvas({ elements, onDropElement, setElements }) {
   const [selectedId, setSelectedId] = useState(null);
+  const positionsRef = useRef({}); // live positions
 
   const selectedElement = elements.find((el) => el.id === selectedId);
 
@@ -18,11 +18,11 @@ export default function Canvas({ elements, onDropElement, setElements }) {
         <div
           key={el.id}
           data-id={el.id}
-          className="relative cursor-pointer"
+          className="absolute cursor-pointer"
           style={{
-            top: el.y,
-            left: el.x,
-            transform: `rotate(${el.rotation || 0}deg)`,
+            transform: `translate(${el.x}px, ${el.y}px) rotate(${
+              el.rotation || 0
+            }deg)`,
             width: el.width,
             height: el.height,
             textAlign: el.align,
@@ -48,28 +48,52 @@ export default function Canvas({ elements, onDropElement, setElements }) {
       {selectedElement && (
         <Moveable
           target={document.querySelector(`[data-id='${selectedId}']`)}
-          draggable={true}
-          resizable={true}
-          rotatable={true}
+          draggable
+          resizable
+          rotatable
           onDrag={(e) => {
-            console.log(e);
+            const x = e.beforeTranslate[0];
+            const y = e.beforeTranslate[1];
+
+            positionsRef.current[selectedId] = { x, y };
+
+            e.target.style.transform = `translate(${x}px, ${y}px) rotate(${
+              selectedElement.rotation || 0
+            }deg)`;
+          }}
+          onDragEnd={() => {
+            const pos = positionsRef.current[selectedId];
+            if (!pos) return;
             setElements((prev) =>
               prev.map((el) =>
-                el.id === selectedId ? { ...el, x: e.left, y: e.top } : el
+                el.id === selectedId ? { ...el, x: pos.x, y: pos.y } : el
               )
             );
           }}
           onResize={(e) => {
-            console.log(e);
+            const { width, height } = e;
+            const [x, y] = e.drag.beforeTranslate;
+
+            e.target.style.width = `${width}px`;
+            e.target.style.height = `${height}px`;
+            e.target.style.transform = `translate(${x}px, ${y}px) rotate(${
+              selectedElement.rotation || 0
+            }deg)`;
+          }}
+          onResizeEnd={(e) => {
+            const { width, height } = e.lastEvent;
+            const [x, y] = e.lastEvent.drag.beforeTranslate;
+
             setElements((prev) =>
               prev.map((el) =>
-                el.id === selectedId
-                  ? { ...el, width: e.width, height: e.height }
-                  : el
+                el.id === selectedId ? { ...el, width, height, x, y } : el
               )
             );
           }}
           onRotate={(e) => {
+            e.target.style.transform = `translate(${selectedElement.x}px, ${selectedElement.y}px) rotate(${e.beforeRotate}deg)`;
+          }}
+          onRotateEnd={(e) => {
             setElements((prev) =>
               prev.map((el) =>
                 el.id === selectedId ? { ...el, rotation: e.beforeRotate } : el
