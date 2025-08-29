@@ -1,4 +1,10 @@
-import { AlignCenter, AlignLeft, AlignRight } from "lucide-react";
+import {
+  AlignCenter,
+  AlignLeft,
+  AlignRight,
+  List,
+  ListOrdered,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { useEditors } from "../../Providers/EditorProvider";
 
@@ -58,6 +64,24 @@ const TextToolbar = () => {
         );
       })}
 
+      {/* number list */}
+      <button
+        onClick={() => editor.chain().focus().toggleOrderedList().run()}
+        className={`p-1 px-2 rounded transition ${
+          editor.isActive("bold") ? "bg-purple-100 text-purple-700 " : ""
+        }`}
+      >
+        <ListOrdered size={20} className="text-gray-500" />
+      </button>
+      {/* unordered list */}
+      <button
+        onClick={() => editor.chain().focus().toggleBulletList().run()}
+        className={`p-1 px-2 rounded transition ${
+          editor.isActive("bold") ? "bg-purple-100 text-purple-700 " : ""
+        }`}
+      >
+        <List size={20} className="text-gray-500" />
+      </button>
       {/* Bold */}
       <button
         onClick={() => editor.chain().focus().toggleBold().run()}
@@ -103,7 +127,7 @@ const TextToolbar = () => {
           setColor(e.target.value);
           editor.chain().focus().setColor(e.target.value).run();
         }}
-        className="w-8 h-8 p-0 rounded cursor-pointer"
+        className="w-6 h-6 p-0 rounded cursor-pointer"
       />
 
       {/* Alignment Buttons */}
