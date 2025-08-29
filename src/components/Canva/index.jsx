@@ -91,8 +91,9 @@ const Canvas = () => {
               );
             }}
             onResize={(e) => {
-              const { width, height } = e;
-              const [x, y] = e.drag.beforeTranslate;
+              const width = e.width / scale;
+              const height = e.height / scale;
+              const [x, y] = e.drag.beforeTranslate.map((val) => val / scale);
               e.target.style.width = `${width}px`;
               e.target.style.height = `${height}px`;
               e.target.style.transform = `translate(${x}px, ${y}px) rotate(${
