@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import IconsTab from "./IconsTab";
+import TextComponent from "./IconsTab/TextComponent";
 
 const Sidebar = () => {
   const [activeTab, setActiveTab] = useState(null);
@@ -17,8 +18,8 @@ const Sidebar = () => {
 
       {/* Right side dynamic panel */}
       {activeTab && (
-        <div className="w-80 relative z-10 bg-white shadow-2xl h-full m-auto rounded p-4">
-          {activeTab === "text" && <div>✍️ Add Text options here</div>}
+        <div className="w-64 relative z-[1] bg-white shadow-2xl h-full m-auto rounded px-4 py-8">
+          {activeTab === "text" && <TextComponent />}
           {activeTab === "images" && <div>🖼️ Upload/Select Images</div>}
           {activeTab === "shapes" && <div>🔺 Shapes library</div>}
           {activeTab === "project" && <div>📑 Manage Projects</div>}

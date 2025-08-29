@@ -1,7 +1,7 @@
 import { Folder, Image, LayoutTemplate, Shapes, Type } from "lucide-react";
 const IconsTab = ({ activeTab, toggleTab }) => {
   return (
-    <div className="w-20 h-full flex flex-col items-center py-4 gap-6 bg-white border-r border-gray-200">
+    <div className="w-20  relative z-[2] h-full flex flex-col items-center py-4 gap-6 bg-white border-r border-white">
       <button
         onClick={() => toggleTab("layers")}
         className="flex flex-col items-center gap-1"
