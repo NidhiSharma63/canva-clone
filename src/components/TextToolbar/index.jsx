@@ -1,10 +1,21 @@
 import { AlignCenter, AlignLeft, AlignRight } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useEditors } from "../../Providers/EditorProvider";
 
 const TextToolbar = () => {
   const { editor } = useEditors();
   const [color, setColor] = useState("#000000");
+  const [_, setUpdate] = useState(0);
+
+  useEffect(() => {
+    if (!editor) return;
+
+    editor.on("transaction", () => {
+      setUpdate((u) => u + 1); // Force re-render to update editor.isactive state
+    });
+
+    return () => editor.off("transaction");
+  }, [editor]);
 
   if (!editor) return null;
 
@@ -19,11 +30,12 @@ const TextToolbar = () => {
 
   const toggleHeading = (level) => {
     if (level) {
-      editor.chain().focus().toggleHeading({ level }).run();
+      editor.chain().focus().setNode("heading", { level }).run();
     } else {
-      editor.chain().focus().setParagraph().run();
+      editor.chain().focus().setNode("paragraph").run();
     }
   };
+  console.log(editor);
 
   return (
     <div className="flex fixed top-[80px] left-1/2 transform -translate-x-1/2 items-center gap-2 p-2 bg-gray-50 rounded shadow-sm z-50">
@@ -32,7 +44,7 @@ const TextToolbar = () => {
         const isActive = h.level
           ? editor.isActive("heading", { level: h.level })
           : editor.isActive("paragraph");
-
+        // console.log(isActive);
         return (
           <button
             key={h.label}
