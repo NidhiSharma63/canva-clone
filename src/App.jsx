@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import Canvas from "./components/Canva/index.jsx";
 import Header from "./components/Header/index.jsx";
 import Sidebar from "./components/Sidebar/index.js";
 
@@ -71,6 +72,7 @@ const App = () => {
       <Header />
       <main className="flex flex-1">
         <Sidebar />
+        <Canvas />
       </main>
     </div>
   );
