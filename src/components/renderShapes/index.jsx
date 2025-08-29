@@ -8,8 +8,8 @@ const RenderShapes = ({ el }) => {
             key={el.id}
             className="relative"
             style={{
-              left: el.x,
-              top: el.y,
+              // left: el.x,
+              // top: el.y,
               width: el.width,
               height: el.height,
               backgroundColor: el.fill,
@@ -22,8 +22,8 @@ const RenderShapes = ({ el }) => {
             key={el.id}
             className="relative rounded-full"
             style={{
-              left: el.x - el.r,
-              top: el.y - el.r,
+              // left: el.x - el.r,
+              // top: el.y - el.r,
               width: el.r * 2,
               height: el.r * 2,
               backgroundColor: el.fill,
@@ -36,8 +36,8 @@ const RenderShapes = ({ el }) => {
             key={el.id}
             className="relative w-0 h-0"
             style={{
-              left: el.x,
-              top: el.y,
+              // left: el.x,
+              // top: el.y,
               borderLeft: `${el.width / 2}px solid transparent`,
               borderRight: `${el.width / 2}px solid transparent`,
               borderBottom: `${el.height}px solid ${el.fill}`,
@@ -50,8 +50,8 @@ const RenderShapes = ({ el }) => {
             key={el.id}
             className="relative"
             style={{
-              left: el.x - el.size / 2,
-              top: el.y - el.size / 2,
+              // left: el.x - el.size / 2,
+              // top: el.y - el.size / 2,
               width: el.size,
               height: el.size,
               clipPath:
@@ -66,8 +66,8 @@ const RenderShapes = ({ el }) => {
             key={el.id}
             className="relative"
             style={{
-              left: el.x,
-              top: el.y,
+              // left: el.x,
+              // top: el.y,
               width: el.width,
               height: el.height,
               backgroundColor: el.fill,
