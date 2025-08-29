@@ -46,7 +46,7 @@ export default function Header() {
           placeholder="Untitled design"
           className="bg-transparent border-b border-white/40 outline-none text-lg font-medium placeholder-white/70"
         />
-        <button className="text-white font-semibold cursor-pointer border-2 border-white/80 rounded px-2 py-1 flex items-center gap-1">
+        <button className="text-white  cursor-pointer border-1 border-white/80 rounded px-2 py-1 flex items-center gap-1">
           Download
         </button>
         <div className="w-9 h-9 rounded-full bg-white text-purple-600 flex items-center justify-center font-bold cursor-pointer">
