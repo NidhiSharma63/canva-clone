@@ -1,11 +1,13 @@
 import { useRef, useState } from "react";
 import Moveable from "react-moveable";
+import { useGlobalState } from "../../Providers/GlobalStateProvider.jsx";
 import TiptapEditorComponent from "../TiptapEditorComponent.jsx";
 
-const Canvas = ({ elements, onDropElement, setElements }) => {
+const Canvas = () => {
   const [selectedId, setSelectedId] = useState(null);
   const positionsRef = useRef({});
   const [scale, setScale] = useState(1);
+  const { elements, handleDrop, setElements } = useGlobalState();
 
   const selectedElement = elements?.find((el) => el.id === selectedId);
 
@@ -32,7 +34,7 @@ const Canvas = ({ elements, onDropElement, setElements }) => {
           transformOrigin: "center center",
         }}
         onDragOver={(e) => e.preventDefault()}
-        onDrop={onDropElement}
+        onDrop={handleDrop}
       >
         {elements?.map((el) => (
           <div

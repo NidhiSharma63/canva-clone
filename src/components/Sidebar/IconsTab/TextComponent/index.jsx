@@ -1,5 +1,3 @@
-import { useEditors } from "../../../../Providers/EditorProvider";
-
 const Button = ({ children, onClick }) => {
   return (
     <button
@@ -12,65 +10,36 @@ const Button = ({ children, onClick }) => {
 };
 
 const TextComponent = () => {
-  const editor = useEditors();
-  if (!editor) return null;
-  const toggleList = (type) => {
-    if (type === "bullet") {
-      editor.chain().focus().toggleBulletList().run();
-    } else if (type === "ordered") {
-      editor.chain().focus().toggleOrderedList().run();
-    }
+  const handleDragStart = (e, type) => {
+    e.dataTransfer.setData("elementType", type);
   };
+
   return (
-    <div className="flex gap-6 mb-2 flex-wrap">
+    <div className="flex gap-6 mb-2 items-center justify-center flex-wrap">
       {/* Block types */}
 
-      <Button
-        onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
+      <h1
+        className="cursor-pointer text-2xl py-2  px-8 rounded font-bold border-1 border-gray-600"
+        draggable
+        onDragStart={(e) => handleDragStart(e, "h1")}
       >
-        H1
-      </Button>
-      <Button
-        onClick={() => {
-          editor.chain().focus().toggleHeading({ level: 2 }).run();
-        }}
+        Add a heading
+      </h1>
+
+      <h4
+        className="cursor-pointer text-lg py-2  px-4 rounded font-medium border-1 border-gray-600"
+        draggable
+        onDragStart={(e) => handleDragStart(e, "h4")}
       >
-        H2
-      </Button>
-      <Button
-        onClick={() => {
-          editor.chain().focus().toggleHeading({ level: 3 }).run();
-        }}
+        Add a sub heading
+      </h4>
+      <p
+        className="cursor-pointer text-sm p-2 rounded  border-1 border-gray-600 "
+        draggable
+        onDragStart={(e) => handleDragStart(e, "text")}
       >
-        H3
-      </Button>
-      <Button
-        onClick={() => {
-          editor.chain().focus().toggleHeading({ level: 4 }).run();
-        }}
-      >
-        H4
-      </Button>
-      <Button
-        onClick={() => {
-          editor.chain().focus().toggleHeading({ level: 5 }).run();
-        }}
-      >
-        H5
-      </Button>
-      <Button
-        onClick={() => {
-          editor.chain().focus().toggleHeading({ level: 6 }).run();
-        }}
-      >
-        H6
-      </Button>
-      <Button onClick={() => editor.chain().focus().setParagraph().run()}>
-        Paragraph
-      </Button>
-      {/* Lists */}
-      <Button onClick={() => toggleList("bullet")}>UL</Button>
-      <Button onClick={() => toggleList("ordered")}>OL</Button>
+        Add a little bit of body text
+      </p>
     </div>
   );
 };
