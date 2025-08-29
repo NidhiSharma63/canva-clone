@@ -2,25 +2,27 @@ import { useState } from "react";
 
 // Basic shapes data for sidebar
 const availableShapes = [
-  { id: "rect", type: "rectangle", width: 200, height: 100, fill: "#000000" },
-  { id: "circle", type: "circle", r: 60, fill: "#000000" },
   {
-    id: "triangle",
-    type: "triangle",
+    shapeId: "rectangle",
+    type: "shape",
+    width: 200,
+    height: 100,
+    fill: "#000000",
+  },
+  { shapeId: "circle", type: "shape", r: 60, fill: "#000000" },
+  {
+    shapeId: "triangle",
+    type: "shape",
     width: 100,
     height: 100,
     fill: "#000000",
   },
-  { id: "star", type: "star", size: 100, fill: "#000000" },
-  { id: "line", type: "line", width: 160, height: 4, fill: "#000000" },
+  { shapeId: "star", type: "shape", size: 100, fill: "#000000" },
+  { shapeId: "line", type: "shape", width: 160, height: 4, fill: "#000000" },
 ];
 
 const ShapesComponent = () => {
   const [elements, setElements] = useState([]);
-
-  const handleDragStart = (e, shape) => {
-    e.dataTransfer.setData("shape", JSON.stringify(shape));
-  };
 
   const handleDrop = (e) => {
     e.preventDefault();
@@ -35,9 +37,17 @@ const ShapesComponent = () => {
 
   const handleDragOver = (e) => e.preventDefault();
 
+  // generic drag start
+  const handleDragStart = (e, elementType, data = {}) => {
+    // set type : "text", "shape", "image", etc
+    e.dataTransfer.setData(
+      "application/json",
+      JSON.stringify({ type: elementType, data })
+    );
+  };
   // Sidebar shape render
   const renderShapePreview = (shape) => {
-    switch (shape.type) {
+    switch (shape.shapeId) {
       case "rectangle":
         return (
           <div
@@ -106,7 +116,7 @@ const ShapesComponent = () => {
           <div
             key={shape.id}
             draggable
-            onDragStart={(e) => handleDragStart(e, shape)}
+            onDragStart={(e) => handleDragStart(e, "shape", shape)}
             className="cursor-grab p-1  rounded hover:bg-gray-200"
           >
             {renderShapePreview(shape)}

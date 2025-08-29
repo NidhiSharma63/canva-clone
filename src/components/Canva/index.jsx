@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import Moveable from "react-moveable";
 import { elementsTypes } from "../../constant/Elements.js";
 import { useGlobalState } from "../../Providers/GlobalStateProvider.jsx";
+import RenderShapes from "../renderShapes/index.jsx";
 import TiptapEditorComponent from "../TiptapEditorComponent.jsx";
 
 const Canvas = () => {
@@ -22,6 +23,7 @@ const Canvas = () => {
     setScale(newScale);
   };
 
+  // console.log(elements);
   return (
     <div className="flex flex-1 justify-center items-center h-[90vh] bg-gray-100 overflow-hidden">
       {/* Canvas= Wrapper with Zoom */}
@@ -61,12 +63,7 @@ const Canvas = () => {
                 selectedId={selectedId}
               />
             )}
-            {el.type === "rectangle" && (
-              <div
-                className="bg-blue-400"
-                style={{ width: el.width || 80, height: el.height || 50 }}
-              ></div>
-            )}
+            {el.type === elementsTypes.shape && <RenderShapes el={el} />}
           </div>
         ))}
 

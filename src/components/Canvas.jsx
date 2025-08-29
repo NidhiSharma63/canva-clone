@@ -36,9 +36,8 @@ export default function Canvas({ elements, onDropElement, setElements }) {
               selectedId={selectedId}
             />
           )}
-          {el.type === "rectangle" && (
+          {el.type === "shape" && (
             <div
-              className="bg-blue-400"
               style={{ width: el.width || 80, height: el.height || 50 }}
             ></div>
           )}

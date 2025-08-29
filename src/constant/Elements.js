@@ -6,7 +6,7 @@ export const textElementsConstant = {
 
 export const elementsTypes = {
   p: "p",
-  rectangle: "rectangle",
+  shape: "shape",
   image: "image",
   h1: "h1",
   h4: "h4",

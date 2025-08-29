@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
-import { elementsTypes } from "../constant/Elements";
+import { elementsTypes, textElementsConstant } from "../constant/Elements";
 // Create Context
 const GlobalStateContext = createContext(null);
 
@@ -26,30 +26,39 @@ const GlobalStateProvider = ({ children }) => {
   // Handle drop
   const handleDrop = (e) => {
     e.preventDefault();
-    const type = e.dataTransfer.getData("elementType");
+    const dropped = JSON.parse(e.dataTransfer.getData("application/json"));
+    const type = dropped.type;
+    const data = dropped.data;
     if (!type) return;
 
     const rect = e.currentTarget.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
+    console.log({ type }, { data });
 
-    const content =
-      elementsTypes[type] === elementsTypes.h1
-        ? "<h1>Add a heading</h1>"
-        : elementsTypes[type] === elementsTypes.h4
-        ? "<h4>Add a sub heading</h4>"
-        : elementsTypes[type] === elementsTypes.p
-        ? "<p>Add a little bit of body text</p>"
-        : "";
-    const newElement = {
-      id: uuidv4(),
-      type,
-      x,
-      y,
-      content,
-    };
+    if (
+      type === elementsTypes.h1 ||
+      type === elementsTypes.h4 ||
+      type === elementsTypes.p
+    ) {
+      const newElement = {
+        id: uuidv4(),
+        type,
+        x,
+        y,
+        content: data.content,
+        ...textElementsConstant,
+      };
 
-    setElements((prev) => [...prev, newElement]);
+      setElements((prev) => [...prev, newElement]);
+      return;
+    }
+
+    if (type === elementsTypes.shape) {
+      const newShape = { ...data, id: uuidv4(), x, y, rotation: 0 };
+      setElements((prev) => [...prev, newShape]);
+      return;
+    }
   };
 
   return (

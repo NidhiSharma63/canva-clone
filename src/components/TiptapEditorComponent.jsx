@@ -19,7 +19,7 @@ const extensions = [
 
 const TiptapEditorComponent = ({ element, setElements }) => {
   const { registerEditor, unregisterEditor } = useEditors();
-  console.log(element);
+  // console.log(element);
 
   const editor = useEditor({
     extensions,
