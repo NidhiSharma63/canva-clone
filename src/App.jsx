@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
-import Canvas from "./components/Canvas.jsx";
-import MenuBar from "./components/Menubar.jsx";
-import Sidebar from "./components/Sidebar.jsx";
+import Header from "./components/Header/index.jsx";
 
 const dummyJson = [
   {
@@ -68,16 +66,8 @@ const App = () => {
     setElements((prev) => [...prev, newElement]);
   };
   return (
-    <div className="flex h-screen">
-      <Sidebar onDragStart={handleDragStart} />
-      <div className="flex flex-col">
-        <MenuBar />
-        <Canvas
-          elements={elements}
-          onDropElement={handleDrop}
-          setElements={setElements}
-        />
-      </div>
+    <div className="flex h-screen flex-col">
+      <Header />
     </div>
   );
 };
