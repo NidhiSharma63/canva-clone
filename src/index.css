@@ -90,7 +90,7 @@ br {
 ul,
 ol {
   padding: 0 1rem;
-  margin: 1.25rem 1rem 1.25rem 0.4rem;
+  /* margin: 1.25rem 1rem 1.25rem 0.4rem; */
 
   li p {
     margin-top: 0.25em;
@@ -122,7 +122,7 @@ ol {
   text-align: inherit;
   margin: 0;
   padding: 0;
-} */
+} 
 
 /* new css */
 /* remove browser bullets */
@@ -130,7 +130,8 @@ ol {
 .editor-content ol {
   list-style: none;
   padding-left: 0;
-  margin: 0.5rem 0;
+  width: 100%;
+  /* word-break: break-all; */
 }
 
 .editor-content ol {
@@ -138,10 +139,11 @@ ol {
 }
 
 .editor-content li {
-  margin: 0.25rem 0;
-  text-align: inherit; /* inherits alignment (left/center/right) */
-  display: flex;       /* flex use karo taaki marker + text ek row me ho */
-  gap: 0.5rem;         /* marker aur text ke beech space */
+  /* margin: 0.25rem 0; */
+  text-align: inherit; 
+  display: flex;      
+  gap: 0.5rem;
+  word-break: break-all;
   /* justify-content: flex-end; */
 }
 
@@ -160,6 +162,7 @@ ol {
 /* left align */
 .editor-content li {
   display: flex;
+  align-items: center;
   gap: 0.5rem;
 }
 

@@ -18,16 +18,19 @@ const TiptapEditorComponent = ({ element, setElements }) => {
 
   const editor = useEditor({
     extensions,
-    content: element?.content || "",
+    content: element?.content,
     onUpdate: ({ editor }) => {
+      const html = editor.getHTML();
+      console.log(html, html === "<p></p>");
       setElements((prev) =>
         prev.map((item) =>
-          item.id === element.id ? { ...item, content: editor.getHTML() } : item
+          item.id === element.id
+            ? { ...item, content: html === "<p></p>" ? "<p>Text</p>" : html }
+            : item
         )
       );
     },
   });
-
   useEffect(() => {
     if (editor) registerEditor(editor);
     return () => {

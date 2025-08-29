@@ -29,7 +29,6 @@ const App = () => {
   const [elements, setElements] = useState([]);
 
   useEffect(() => {
-    console.log(elements);
     if (elements.length > 0) {
       localStorage.setItem("elements", JSON.stringify(elements));
     }
