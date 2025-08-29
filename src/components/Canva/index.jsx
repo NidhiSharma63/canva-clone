@@ -91,23 +91,64 @@ const Canvas = () => {
               );
             }}
             onResize={(e) => {
-              const width = e.width / scale;
-              const height = e.height / scale;
-              const [x, y] = e.drag.beforeTranslate.map((val) => val / scale);
-              e.target.style.width = `${width}px`;
-              e.target.style.height = `${height}px`;
-              e.target.style.transform = `translate(${x}px, ${y}px) rotate(${
-                selectedElement.rotation || 0
-              }deg)`;
+              const [dx, dy] = e.drag.beforeTranslate.map((val) => val / scale);
+
+              if (selectedElement.shapeId === "circle") {
+                // update radius only
+                const diameter = Math.max(e.width / scale, e.height / scale);
+                const r = diameter / 2;
+
+                e.target.style.width = `${diameter}px`;
+                e.target.style.height = `${diameter}px`;
+
+                const newX = selectedElement.x + selectedElement.r - r + dx;
+                const newY = selectedElement.y + selectedElement.r - r + dy;
+
+                e.target.style.transform = `translate(${newX}px, ${newY}px) rotate(${
+                  selectedElement.rotation || 0
+                }deg)`;
+              } else {
+                const width = e.width / scale;
+                const height = e.height / scale;
+                e.target.style.width = `${width}px`;
+                e.target.style.height = `${height}px`;
+                e.target.style.transform = `translate(${dx}px, ${dy}px) rotate(${
+                  selectedElement.rotation || 0
+                }deg)`;
+              }
             }}
             onResizeEnd={(e) => {
-              const { width, height } = e.lastEvent;
-              const [x, y] = e.lastEvent.drag.beforeTranslate;
-              setElements((prev) =>
-                prev.map((el) =>
-                  el.id === selectedId ? { ...el, width, height, x, y } : el
-                )
-              );
+              const [dx, dy] = e.lastEvent.drag.beforeTranslate;
+
+              if (selectedElement.shapeId === "circle") {
+                const diameter = Math.max(
+                  e.lastEvent.width,
+                  e.lastEvent.height
+                );
+                const r = diameter / 2;
+
+                const newX = selectedElement.x + selectedElement.r - r + dx;
+                const newY = selectedElement.y + selectedElement.r - r + dy;
+
+                setElements((prev) =>
+                  prev.map((el) =>
+                    el.id === selectedId
+                      ? { ...el, x: newX, y: newY, r } // update radius only
+                      : el
+                  )
+                );
+              } else {
+                const width = e.lastEvent.width;
+                const height = e.lastEvent.height;
+
+                setElements((prev) =>
+                  prev.map((el) =>
+                    el.id === selectedId
+                      ? { ...el, width, height, x: dx, y: dy }
+                      : el
+                  )
+                );
+              }
             }}
             onRotate={(e) => {
               e.target.style.transform = `translate(${selectedElement.x}px, ${selectedElement.y}px) rotate(${e.beforeRotate}deg)`;

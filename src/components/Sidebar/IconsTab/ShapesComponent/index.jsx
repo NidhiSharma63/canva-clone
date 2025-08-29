@@ -21,6 +21,14 @@ const availableShapes = [
   { shapeId: "line", type: "shape", width: 160, height: 4, fill: "#000000" },
 ];
 
+/*************  ✨ Windsurf Command ⭐  *************/
+  /**
+   * Sidebar component for shapes. Renders a list of available shapes and allows
+   * user to drag and drop them into the canvas.
+   *
+   * @returns {JSX.Element}
+   */
+/*******  ffbe0003-956b-4708-8e1e-44a1babb2bdc  *******/
 const ShapesComponent = () => {
   const [elements, setElements] = useState([]);
 
