@@ -40,7 +40,7 @@ export default function Header() {
       </div> */}
 
       {/* Right - Share + Download + Profile */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-6">
         <input
           type="text"
           placeholder="Untitled design"
