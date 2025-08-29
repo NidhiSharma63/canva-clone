@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import Moveable from "react-moveable";
+import { elementsTypes } from "../../constant/Elements.js";
 import { useGlobalState } from "../../Providers/GlobalStateProvider.jsx";
 import TiptapEditorComponent from "../TiptapEditorComponent.jsx";
 
@@ -51,7 +52,9 @@ const Canvas = () => {
             }}
             onClick={() => setSelectedId(el.id)}
           >
-            {el.type === "text" && (
+            {(el.type === elementsTypes.h1 ||
+              el.type === elementsTypes.h4 ||
+              el.type === elementsTypes.p) && (
               <TiptapEditorComponent
                 element={el}
                 setElements={setElements}

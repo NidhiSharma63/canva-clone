@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
+import { elementsTypes } from "../constant/Elements";
 // Create Context
 const GlobalStateContext = createContext(null);
 
@@ -32,16 +33,20 @@ const GlobalStateProvider = ({ children }) => {
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
 
+    const content =
+      elementsTypes[type] === elementsTypes.h1
+        ? "<h1>Add a heading</h1>"
+        : elementsTypes[type] === elementsTypes.h4
+        ? "<h4>Add a sub heading</h4>"
+        : elementsTypes[type] === elementsTypes.p
+        ? "<p>Add a little bit of body text</p>"
+        : "";
     const newElement = {
       id: uuidv4(),
       type,
       x,
       y,
-      rotation: 0,
-      width: 100,
-      height: 50,
-      content: "<p>Nidhi</p>",
-      background: "",
+      content,
     };
 
     setElements((prev) => [...prev, newElement]);

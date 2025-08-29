@@ -1,3 +1,5 @@
+import { elementsTypes } from "../../../../constant/Elements";
+
 const Button = ({ children, onClick }) => {
   return (
     <button
@@ -21,7 +23,7 @@ const TextComponent = () => {
       <h1
         className="cursor-pointer text-2xl py-2  px-8 rounded font-bold border-1 border-gray-600"
         draggable
-        onDragStart={(e) => handleDragStart(e, "h1")}
+        onDragStart={(e) => handleDragStart(e, elementsTypes.h1)}
       >
         Add a heading
       </h1>
@@ -29,14 +31,14 @@ const TextComponent = () => {
       <h4
         className="cursor-pointer text-lg py-2  px-4 rounded font-medium border-1 border-gray-600"
         draggable
-        onDragStart={(e) => handleDragStart(e, "h4")}
+        onDragStart={(e) => handleDragStart(e, elementsTypes.h4)}
       >
         Add a sub heading
       </h4>
       <p
         className="cursor-pointer text-sm p-2 rounded  border-1 border-gray-600 "
         draggable
-        onDragStart={(e) => handleDragStart(e, "text")}
+        onDragStart={(e) => handleDragStart(e, elementsTypes.p)}
       >
         Add a little bit of body text
       </p>
