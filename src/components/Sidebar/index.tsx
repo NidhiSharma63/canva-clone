@@ -3,6 +3,7 @@
 import { useState } from "react";
 import IconsTab from "./IconsTab";
 import ImagesComponent from "./IconsTab/ImagesComponent";
+import ShapesComponent from "./IconsTab/ShapesComponent";
 import TextComponent from "./IconsTab/TextComponent";
 
 const Sidebar = () => {
@@ -22,7 +23,7 @@ const Sidebar = () => {
         <div className="w-64 relative z-[1] bg-white shadow-2xl h-full m-auto rounded px-4 py-8">
           {activeTab === "text" && <TextComponent />}
           {activeTab === "images" && <ImagesComponent />}
-          {activeTab === "shapes" && <div>🔺 Shapes library</div>}
+          {activeTab === "shapes" && <ShapesComponent />}
           {activeTab === "project" && <div>📑 Manage Projects</div>}
         </div>
       )}
