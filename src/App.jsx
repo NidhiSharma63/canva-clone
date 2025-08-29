@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import Header from "./components/Header/index.jsx";
+import Sidebar from "./components/Sidebar/index.js";
 
 const dummyJson = [
   {
@@ -68,6 +69,9 @@ const App = () => {
   return (
     <div className="flex h-screen flex-col">
       <Header />
+      <main className="flex flex-1">
+        <Sidebar />
+      </main>
     </div>
   );
 };
