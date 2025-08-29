@@ -5,7 +5,7 @@ const EditorContext = createContext();
 export const useEditors = () => useContext(EditorContext);
 
 const EditorProvider = ({ children }) => {
-  const [editor, setEditor] = useState({}); // { elementId: editor }
+  const [editor, setEditor] = useState(null); // { elementId: editor }
 
   const registerEditor = useCallback((editor) => {
     setEditor(editor);

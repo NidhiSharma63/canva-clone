@@ -1,6 +1,7 @@
 import Canvas from "./components/Canva/index.jsx";
 import Header from "./components/Header/index.jsx";
 import Sidebar from "./components/Sidebar/index.js";
+import TextToolbar from "./components/TextToolbar/index.jsx";
 
 const dummyJson = [
   {
@@ -28,8 +29,9 @@ const App = () => {
   return (
     <div className="flex h-screen flex-col">
       <Header />
-      <main className="flex flex-1">
+      <main className="flex relative flex-1">
         <Sidebar />
+        <TextToolbar />
         <Canvas />
       </main>
     </div>
