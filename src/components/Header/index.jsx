@@ -1,4 +1,5 @@
 // Header.jsx
+import useAuth from "@/api/queries/useAuth";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -6,8 +7,15 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"; // shadcn import
 import { User } from "lucide-react";
+import { useCallback } from "react";
 
 export default function Header() {
+  const { useLogoutQuery } = useAuth();
+  const { mutate: logout } = useLogoutQuery();
+  const handleLogout = useCallback(() => {
+    logout();
+  }, [logout]);
+
   return (
     <header className="w-full flex items-center justify-between px-4 py-4 shadow-md bg-gradient-to-r from-teal-400 via-blue-400 to-purple-400 text-white">
       {/* Left - Logo */}
@@ -36,14 +44,7 @@ export default function Header() {
             </div>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-32">
-            <DropdownMenuItem
-              onClick={() => {
-                console.log("Logout clicked");
-                // yaha logout logic daalna
-              }}
-            >
-              Logout
-            </DropdownMenuItem>
+            <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

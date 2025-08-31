@@ -39,7 +39,7 @@ const useAuth = () => {
       },
       onSuccess: (data) => {
         // now save this token in localStorage which have same uniqueBrowserId
-        console.log(data);
+        // console.log(data);
         const tokens = data?.user?.tokens;
         const token = tokens?.find(
           (token) => token?.uniqueBrowserId === uniqueBrowserId
