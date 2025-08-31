@@ -1,41 +1,44 @@
-import Canvas from "./components/Canva/index.jsx";
-import Header from "./components/Header/index.jsx";
-import Sidebar from "./components/Sidebar/index.js";
-import TextToolbar from "./components/TextToolbar/index.jsx";
+import {
+  createBrowserRouter,
+  Navigate,
+  Outlet,
+  RouterProvider,
+} from "react-router";
+import SignIn from "./pages/Auth/SignInScreen/Index";
+import SignUp from "./pages/Auth/SignUpScreen";
+import HomeScreen from "./pages/HomeScreen/Index";
+import getToken from "./utils/getToken";
 
-const dummyJson = [
+function ProtectedRoute() {
+  const isAuthed = getToken();
+
+  if (!isAuthed) {
+    return <Navigate to="/signin" replace />;
+  }
+
+  return <Outlet />;
+}
+
+const router = createBrowserRouter([
   {
-    id: "1",
-    type: "text",
-    x: 100,
-    y: 100,
-    rotation: 45,
-    width: 100,
-    height: 50,
-    background: "red",
+    path: "/signup",
+    element: <SignUp />,
   },
   {
-    id: "2",
-    type: "rectangle",
-    x: 200,
-    y: 200,
-    rotation: 45,
-    width: 100,
-    height: 50,
-    background: "red",
+    path: "/signin",
+    element: <SignIn />,
   },
-];
-const App = () => {
-  return (
-    <div className="flex h-screen flex-col">
-      <Header />
-      <main className="flex relative flex-1">
-        <Sidebar />
-        <TextToolbar />
-        <Canvas />
-      </main>
-    </div>
-  );
-};
+  {
+    element: <ProtectedRoute />, // wrapper
+    children: [
+      {
+        path: "/",
+        element: <HomeScreen />,
+      },
+    ],
+  },
+]);
 
-export default App;
+export default function App() {
+  return <RouterProvider router={router} />;
+}
