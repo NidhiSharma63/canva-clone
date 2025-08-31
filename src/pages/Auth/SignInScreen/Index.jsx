@@ -176,7 +176,7 @@ export default function SignIn() {
 
           {/* Submit Button */}
           {isLoading ? (
-            <Loader isLoading={isLoading} />
+            <Loader isLoading={isLoading} className="w-full" />
           ) : (
             <button
               onClick={handleSubmit}

@@ -211,7 +211,7 @@ const SignUp = () => {
 
             {/* Submit Button */}
             {isLoading ? (
-              <Loader isLoading={isLoading} />
+              <Loader isLoading={isLoading} className="w-full" />
             ) : (
               <button
                 type="submit"
