@@ -127,92 +127,112 @@ const SignUp = () => {
   );
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-[#f8f9fa]">
-      <div className="bg-white shadow-lg rounded-2xl p-8 w-full max-w-md">
-        <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
-          Create Account
-        </h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Username */}
-          <div>
-            <label className="block text-gray-700 mb-1">Username</label>
-            <input
-              type="text"
-              name="username"
-              value={formData.username}
-              onChange={handleChange}
-              placeholder="Enter username"
-              className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400 outline-none"
-            />
-            {formErrors.username && (
-              <p className="text-red-500 text-sm mt-1">{formErrors.username}</p>
-            )}
-          </div>
+    <div className="flex min-h-screen">
+      {/* Left Section (Branding) - hidden on mobile */}
+      <div className="hidden md:flex flex-1 items-center justify-center bg-gradient-to-br from-teal-400 via-blue-400 to-purple-400 text-white p-10">
+        <div className="max-w-md text-center">
+          <h1 className="text-4xl font-extrabold mb-4">
+            Welcome to Canva Clone 🎨
+          </h1>
+          <p className="text-lg opacity-90">
+            Design stunning graphics, presentations, and social media posts with
+            ease.
+          </p>
+        </div>
+      </div>
 
-          {/* Email */}
-          <div>
-            <label className="block text-gray-700 mb-1">Email</label>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              placeholder="Enter email"
-              className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400 outline-none"
-            />
-            {formErrors.email && (
-              <p className="text-red-500 text-sm mt-1">{formErrors.email}</p>
-            )}
-          </div>
-
-          {/* Password */}
-          <div>
-            <label className="block text-gray-700 mb-1">Password</label>
-            <div className="relative">
+      {/* Right Section (Form) */}
+      <div className="flex flex-1 items-center justify-center bg-gray-50">
+        <div className="bg-white shadow-xl rounded-2xl p-8 w-full max-w-md">
+          <h2 className="text-3xl font-extrabold text-gray-800 mb-6 text-center">
+            Create Account
+          </h2>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Username */}
+            <div>
+              <label className="block text-gray-700 mb-1">Username</label>
               <input
-                type={showPassword ? "text" : "password"}
-                name="password"
-                value={formData.password}
+                type="text"
+                name="username"
+                value={formData.username}
                 onChange={handleChange}
-                placeholder="Enter password"
-                className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400 outline-none"
+                placeholder="Enter username"
+                className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-400 outline-none"
               />
-
-              <button
-                type="button"
-                onClick={() => setShowPassword((prev) => !prev)}
-                className="absolute right-3 top-2 text-gray-500"
-              >
-                {showPassword ? <EyeIcon /> : <EyeClosed />}
-              </button>
-              {formErrors.password && (
+              {formErrors.username && (
                 <p className="text-red-500 text-sm mt-1">
-                  {formErrors.password}
+                  {formErrors.username}
                 </p>
               )}
             </div>
-          </div>
 
-          {/* Submit Button */}
-          {isLoading ? (
-            <Loader isLoading={isLoading} />
-          ) : (
-            <button
-              type="submit"
-              className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
+            {/* Email */}
+            <div>
+              <label className="block text-gray-700 mb-1">Email</label>
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="Enter email"
+                className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-400 outline-none"
+              />
+              {formErrors.email && (
+                <p className="text-red-500 text-sm mt-1">{formErrors.email}</p>
+              )}
+            </div>
+
+            {/* Password */}
+            <div>
+              <label className="block text-gray-700 mb-1">Password</label>
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  placeholder="Enter password"
+                  className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-400 outline-none"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  className="absolute right-3 top-2 text-gray-500"
+                >
+                  {showPassword ? <EyeIcon /> : <EyeClosed />}
+                </button>
+                {formErrors.password && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {formErrors.password}
+                  </p>
+                )}
+              </div>
+            </div>
+
+            {/* Submit Button */}
+            {isLoading ? (
+              <Loader isLoading={isLoading} />
+            ) : (
+              <button
+                type="submit"
+                className="w-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white py-2 rounded-lg hover:opacity-90 transition"
+              >
+                Create Account
+              </button>
+            )}
+          </form>
+
+          {/* Already have account */}
+          <p className="mt-4 text-center text-gray-700">
+            Already have an account?{" "}
+            <Link
+              to="/signin"
+              className="text-indigo-600 hover:underline font-medium"
             >
-              Create Account
-            </button>
-          )}
-        </form>
-
-        {/* Already have account */}
-        <p className="mt-4 text-center text-gray-600">
-          Already have an account?{" "}
-          <Link to="/signin" className="text-blue-600 hover:underline">
-            Sign in
-          </Link>
-        </p>
+              Sign in
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );
