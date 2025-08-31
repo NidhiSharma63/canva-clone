@@ -108,13 +108,14 @@ const Canvas = () => {
                   selectedElement.rotation || 0
                 }deg)`;
               } else {
-                const width = e.width / scale;
-                const height = e.height / scale;
-                e.target.style.width = `${width}px`;
-                e.target.style.height = `${height}px`;
-                e.target.style.transform = `translate(${dx}px, ${dy}px) rotate(${
-                  selectedElement.rotation || 0
-                }deg)`;
+               const { width, height } = e;
+               const [x, y] = e.drag.beforeTranslate;
+
+               e.target.style.width = `${width}px`;
+               e.target.style.height = `${height}px`;
+               e.target.style.transform = `translate(${x}px, ${y}px) rotate(${
+                 selectedElement.rotation || 0
+               }deg)`;
               }
             }}
             onResizeEnd={(e) => {
@@ -138,14 +139,12 @@ const Canvas = () => {
                   )
                 );
               } else {
-                const width = e.lastEvent.width;
-                const height = e.lastEvent.height;
+                const { width, height } = e.lastEvent;
+                const [x, y] = e.lastEvent.drag.beforeTranslate;
 
                 setElements((prev) =>
                   prev.map((el) =>
-                    el.id === selectedId
-                      ? { ...el, width, height, x: dx, y: dy }
-                      : el
+                    el.id === selectedId ? { ...el, width, height, x, y } : el
                   )
                 );
               }
