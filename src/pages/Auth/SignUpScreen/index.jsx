@@ -211,7 +211,7 @@ const SignUp = () => {
 
             {/* Submit Button */}
             {isLoading ? (
-              <Loader isLoading={isLoading} className="w-full" />
+              <Loader isLoading={isLoading} className="w-full animate-spin" />
             ) : (
               <button
                 type="submit"

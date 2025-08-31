@@ -1,5 +1,4 @@
 const RenderShapes = ({ el }) => {
-  console.log(el);
   switch (el.shapeId) {
     case "rectangle":
       return (

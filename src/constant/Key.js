@@ -5,4 +5,5 @@ export const LOCALSTORAGE_KEY = {
 
 export const QUERY_KEY = {
   TEMPLATE: "template",
+  Image: "image",
 };

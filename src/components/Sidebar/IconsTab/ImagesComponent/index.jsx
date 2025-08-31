@@ -1,50 +1,9 @@
-import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
-import { CloudUpload } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { storage } from "../../../../firebase/config";
+import useImageHook from "@/components/Sidebar/IconsTab/ImagesComponent/hook";
+import { CloudUpload, Loader } from "lucide-react";
 
 const ImagesComponent = () => {
-  const inputRef = useRef(null);
-  const [file, setFile] = useState(null);
-  const [preview, setPreview] = useState("");
-  const [progress, setProgress] = useState(0);
-  const [downloadURL, setDownloadURL] = useState("");
-
-  const handleClick = useCallback(() => {
-    inputRef.current?.click();
-  }, []);
-
-  // preview + upload
-  useEffect(() => {
-    if (!file) return;
-
-    const objectUrl = URL.createObjectURL(file);
-    setPreview(objectUrl);
-
-    // firebase upload
-    const storageRef = ref(storage, `images/${Date.now()}-${file.name}`);
-    const uploadTask = uploadBytesResumable(storageRef, file);
-
-    uploadTask.on(
-      "state_changed",
-      (snapshot) => {
-        const prog = Math.round(
-          (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-        );
-        setProgress(prog);
-      },
-      (error) => {
-        console.error("Upload error:", error);
-      },
-      async () => {
-        const url = await getDownloadURL(uploadTask.snapshot.ref);
-        setDownloadURL(url);
-      }
-    );
-
-    return () => URL.revokeObjectURL(objectUrl);
-  }, [file]);
-
+  const { inputRef, setFile, preview, progress, data, isPending, handleClick } =
+    useImageHook();
   return (
     <div className="flex flex-col gap-6 w-full">
       <input
@@ -64,33 +23,44 @@ const ImagesComponent = () => {
         Upload a file
       </button>
 
-      {/* Preview box */}
-      {preview && (
-        <div className="relative w-full max-w-md max-h-48 rounded-xl overflow-hidden">
-          <img
-            src={preview}
-            alt="preview"
-            className="w-full h-full object-contain"
-          />
+      {isPending && <Loader className="animate-spin w-full" />}
+      {/* show all images */}
+      <div className="flex flex-wrap overflow-y-auto h-[500px] w-full">
+        {/* Preview box */}
+        {preview && (
+          <div className="relative w-full max-w-md max-h-48 rounded-xl overflow-hidden">
+            <img
+              src={preview}
+              alt="preview"
+              className="w-full h-full object-contain"
+            />
 
-          {/* Gradient progress bar */}
-          {progress < 100 && (
-            <div className="absolute bottom-0 left-0 w-full h-2 bg-gray-300">
-              <div
-                className="h-full bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 transition-all duration-300"
-                style={{ width: `${progress}%` }}
-              />
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Uploaded image URL */}
-      {downloadURL && (
-        <p className="text-sm text-green-600 break-all">
-          Uploaded! URL: {downloadURL}
-        </p>
-      )}
+            {/* Gradient progress bar */}
+            {progress < 100 && (
+              <div className="absolute bottom-0 left-0 w-full h-2 bg-gray-300">
+                <div
+                  className="h-full bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 transition-all duration-300"
+                  style={{ width: `${progress}%` }}
+                />
+              </div>
+            )}
+          </div>
+        )}
+        {data && !isPending && (
+          <div className="flex flex-wrap gap-4">
+            {data.map((image) => (
+              <div className="relative w-full max-w-md max-h-48 rounded-xl overflow-hidden">
+                <img
+                  key={image.id}
+                  src={image.url}
+                  alt={image.name}
+                  className="w-full h-full object-contain"
+                />
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 };
