@@ -1,3 +1,4 @@
+import templates from "@/constant/template.js";
 import { useRef, useState } from "react";
 import Moveable from "react-moveable";
 import { elementsTypes } from "../../constant/Elements.js";
@@ -9,20 +10,22 @@ const Canvas = () => {
   const [selectedId, setSelectedId] = useState(null);
   const positionsRef = useRef({});
   const [scale, setScale] = useState(1);
-  const { elements, handleDrop, setElements } = useGlobalState();
+  const { elements, handleDrop, setElements, userSelectedTemplate } =
+    useGlobalState();
 
   const selectedElement = elements?.find((el) => el.id === selectedId);
 
   const handleWheel = (e) => {
     e.preventDefault();
 
-    // zoom factor
-    let zoomSpeed = e.ctrlKey ? 0.01 : 0.001;
+    // thoda fast zoom factor
+    let zoomSpeed = e.ctrlKey ? 0.05 : 0.01;
     let newScale = scale - e.deltaY * zoomSpeed;
-    newScale = Math.min(Math.max(newScale, 0.2), 5); // limit zoom
+    newScale = Math.min(Math.max(newScale, 0.1), 5); // limit zoom (0.1x to 5x)
     setScale(newScale);
   };
 
+  const selectedTemplate = templates.find((t) => t.id === userSelectedTemplate);
   // console.log(elements);
   return (
     <div className="flex flex-1 justify-center items-center h-[90vh] bg-gray-100 overflow-hidden">
@@ -31,8 +34,8 @@ const Canvas = () => {
         onWheel={handleWheel}
         className="relative border-2 border-dashed border-gray-400 bg-white overflow-hidden"
         style={{
-          width: "1200px", // fixed for export
-          height: "800px", // fixed for export
+          width: `${selectedTemplate?.width || 1200}px`,
+          height: `${selectedTemplate?.height || 800}px`,
           transform: `scale(${scale})`,
           transformOrigin: "center center",
         }}

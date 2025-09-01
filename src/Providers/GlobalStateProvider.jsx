@@ -1,3 +1,4 @@
+import templates from "@/constant/template";
 import { createContext, useContext, useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { elementsTypes, textElementsConstant } from "../constant/Elements";
@@ -7,7 +8,9 @@ const GlobalStateContext = createContext(null);
 // Provider Component
 const GlobalStateProvider = ({ children }) => {
   const [elements, setElements] = useState([]);
-
+  const [userSelectedTemplate, setUserSelectedTemplate] = useState(
+    templates[0].id
+  );
   // Save to localStorage whenever elements change
   useEffect(() => {
     if (elements.length > 0) {
@@ -79,7 +82,15 @@ const GlobalStateProvider = ({ children }) => {
   };
 
   return (
-    <GlobalStateContext.Provider value={{ elements, setElements, handleDrop }}>
+    <GlobalStateContext.Provider
+      value={{
+        elements,
+        setElements,
+        handleDrop,
+        userSelectedTemplate,
+        setUserSelectedTemplate,
+      }}
+    >
       {children}
     </GlobalStateContext.Provider>
   );
