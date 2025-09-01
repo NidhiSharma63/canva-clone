@@ -1,11 +1,10 @@
 import templates from "@/constant/template.js";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Moveable from "react-moveable";
 import { elementsTypes } from "../../constant/Elements.js";
 import { useGlobalState } from "../../Providers/GlobalStateProvider.jsx";
 import RenderShapes from "../renderShapes/index.jsx";
 import TiptapEditorComponent from "../TiptapEditorComponent.jsx";
-
 const Canvas = () => {
   const [selectedId, setSelectedId] = useState(null);
   const positionsRef = useRef({});
@@ -15,23 +14,30 @@ const Canvas = () => {
 
   const selectedElement = elements?.find((el) => el.id === selectedId);
 
-  const handleWheel = (e) => {
-    e.preventDefault();
+  useEffect(() => {
+    const canvas = document.getElementById("canvas-wrapper");
 
-    // thoda fast zoom factor
-    let zoomSpeed = e.ctrlKey ? 0.05 : 0.01;
-    let newScale = scale - e.deltaY * zoomSpeed;
-    newScale = Math.min(Math.max(newScale, 0.1), 5); // limit zoom (0.1x to 5x)
-    setScale(newScale);
-  };
+    const handleWheel = (e) => {
+      e.preventDefault(); 
+      let zoomSpeed = e.ctrlKey ? 0.05 : 0.01;
+      let newScale = scale - e.deltaY * zoomSpeed;
+      newScale = Math.min(Math.max(newScale, 0.1), 5);
+      setScale(newScale);
+    };
 
+    canvas.addEventListener("wheel", handleWheel, { passive: false });
+
+    return () => {
+      canvas.removeEventListener("wheel", handleWheel);
+    };
+  }, [scale]);
   const selectedTemplate = templates.find((t) => t.id === userSelectedTemplate);
   // console.log(elements);
   return (
     <div className="flex flex-1 justify-center items-center h-[90vh] bg-gray-100 overflow-hidden">
       {/* Canvas= Wrapper with Zoom */}
       <div
-        onWheel={handleWheel}
+        id="canvas-wrapper"
         className="relative border-2 border-dashed border-gray-400 bg-white overflow-hidden"
         style={{
           width: `${selectedTemplate?.width || 1200}px`,
