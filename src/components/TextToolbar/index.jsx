@@ -18,14 +18,14 @@ import { useEditors } from "../../Providers/EditorProvider";
 const TextToolbar = () => {
   const { editor } = useEditors();
   const [color, setColor] = useState("#000000");
-  const [_, setUpdate] = useState(0);
   const [currentFont, setCurrentFont] = useState("Roboto");
+  const [currentSize, setCurrentSize] = useState("16"); // default font size
+  const [_, setUpdate] = useState(0);
 
   useEffect(() => {
     if (!editor) return;
 
     const handleTransaction = () => {
-      // Force re-render for toolbar active states
       setUpdate((u) => u + 1);
     };
 
@@ -68,6 +68,23 @@ const TextToolbar = () => {
     "Courier Prime",
   ];
 
+  const fontSizes = [
+    "12",
+    "14",
+    "16",
+    "18",
+    "20",
+    "22",
+    "24",
+    "28",
+    "32",
+    "36",
+    "48",
+    "64",
+    "72",
+    "",
+  ];
+
   return (
     <div className="flex fixed top-[80px] left-1/2 transform -translate-x-1/2 items-center gap-2 p-2 bg-gray-50 rounded shadow-sm z-50">
       {/* Headings / Paragraph */}
@@ -91,7 +108,7 @@ const TextToolbar = () => {
       {/* Font Family Dropdown */}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <p className="text-md">{currentFont} ▼</p>
+          <p className="text-md cursor-pointer">{currentFont} ▼</p>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-56 max-h-60 overflow-auto">
           <DropdownMenuLabel>Select Font</DropdownMenuLabel>
@@ -114,6 +131,53 @@ const TextToolbar = () => {
         </DropdownMenuContent>
       </DropdownMenu>
 
+      {/* Font Size Dropdown */}
+      <div className="flex items-center gap-1">
+        <button
+          onClick={() => {
+            const newSize = Math.max(1, parseInt(currentSize) - 1);
+            setCurrentSize(newSize.toString());
+            editor
+              .chain()
+              .focus()
+              .setMark("textStyle", { fontSize: `${newSize}px` })
+              .run();
+          }}
+          className="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300"
+        >
+          -
+        </button>
+        <input
+          type="number"
+          min="1"
+          value={currentSize}
+          onChange={(e) => {
+            const val = e.target.value;
+            setCurrentSize(val);
+            if (val)
+              editor
+                .chain()
+                .focus()
+                .setMark("textStyle", { fontSize: `${val}px` })
+                .run();
+          }}
+          className="w-14 text-center border rounded px-1 py-0.5"
+        />
+        <button
+          onClick={() => {
+            const newSize = parseInt(currentSize) + 1;
+            setCurrentSize(newSize.toString());
+            editor
+              .chain()
+              .focus()
+              .setMark("textStyle", { fontSize: `${newSize}px` })
+              .run();
+          }}
+          className="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300"
+        >
+          +
+        </button>
+      </div>
       {/* Ordered List */}
       <button
         onClick={() => editor.chain().focus().toggleOrderedList().run()}
