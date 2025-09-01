@@ -37,7 +37,6 @@ const GlobalStateProvider = ({ children }) => {
     const rect = e.currentTarget.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
-    console.log({ type }, { data });
 
     if (
       type === elementsTypes.h1 ||
@@ -96,7 +95,7 @@ const GlobalStateProvider = ({ children }) => {
   );
 };
 
-// 3️⃣ Custom hook for easy usage
+// Custom hook for easy usage
 export const useGlobalState = () => useContext(GlobalStateContext);
 
 export default GlobalStateProvider;

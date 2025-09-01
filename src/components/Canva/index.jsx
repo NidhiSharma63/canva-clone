@@ -14,11 +14,12 @@ const Canvas = () => {
 
   const selectedElement = elements?.find((el) => el.id === selectedId);
 
+  //  Wheel zoom listener
   useEffect(() => {
     const canvas = document.getElementById("canvas-wrapper");
 
     const handleWheel = (e) => {
-      e.preventDefault(); 
+      e.preventDefault();
       let zoomSpeed = e.ctrlKey ? 0.05 : 0.01;
       let newScale = scale - e.deltaY * zoomSpeed;
       newScale = Math.min(Math.max(newScale, 0.1), 5);
@@ -31,6 +32,21 @@ const Canvas = () => {
       canvas.removeEventListener("wheel", handleWheel);
     };
   }, [scale]);
+
+  //  Delete selected element
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if ((e.key === "Delete" || e.key === "Backspace") && selectedId) {
+        setElements((prev) => prev.filter((el) => el.id !== selectedId));
+        setSelectedId(null);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [selectedId, setElements]);
   const selectedTemplate = templates.find((t) => t.id === userSelectedTemplate);
   // console.log(elements);
   return (
