@@ -29,7 +29,7 @@ const Canvas = () => {
       {/* Canvas= Wrapper with Zoom */}
       <div
         onWheel={handleWheel}
-        className="relative border-2 border-dashed border-gray-400 bg-white"
+        className="relative border-2 border-dashed border-gray-400 bg-white overflow-hidden"
         style={{
           width: "1200px", // fixed for export
           height: "800px", // fixed for export
@@ -69,8 +69,9 @@ const Canvas = () => {
               <img
                 src={el.url}
                 alt={el.name}
-                width={el.width}
-                height={el.height}
+                // width={el.width}
+                // height={el.height}
+                className="object-cover h-full w-full"
               />
             )}
           </div>
