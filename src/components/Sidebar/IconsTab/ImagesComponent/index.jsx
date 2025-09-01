@@ -2,8 +2,16 @@ import useImageHook from "@/components/Sidebar/IconsTab/ImagesComponent/hook";
 import { CloudUpload, Loader } from "lucide-react";
 
 const ImagesComponent = () => {
-  const { inputRef, setFile, preview, progress, data, isPending, handleClick } =
-    useImageHook();
+  const {
+    inputRef,
+    setFile,
+    preview,
+    progress,
+    data,
+    isPending,
+    handleClick,
+    handleDragStart,
+  } = useImageHook();
   return (
     <div className="flex flex-col gap-6 w-full">
       <input
@@ -49,7 +57,10 @@ const ImagesComponent = () => {
         {data && !isPending && (
           <div className="flex flex-wrap gap-4">
             {data.map((image) => (
-              <div className="relative w-full max-w-md max-h-48 rounded-xl overflow-hidden">
+              <div
+                className="relative w-full max-w-md max-h-48 rounded-xl overflow-hidden"
+                onDragStart={(e) => handleDragStart(e, "image", image)}
+              >
                 <img
                   key={image.id}
                   src={image.url}

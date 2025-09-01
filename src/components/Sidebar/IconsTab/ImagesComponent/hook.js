@@ -71,6 +71,16 @@ const useImageHook = () => {
     return () => URL.revokeObjectURL(objectUrl);
   }, [file, mutateAsync]);
 
+  const handleDragStart = useCallback((e, elementType, data = {}) => {
+    e.dataTransfer.setData(
+      "application/json",
+      JSON.stringify({
+        type: elementType,
+        data, // {id, url, name} aayega
+      })
+    );
+  }, []);
+
   return {
     inputRef,
     file,
@@ -81,6 +91,7 @@ const useImageHook = () => {
     handleClick,
     data,
     isPending,
+    handleDragStart,
   };
 };
 

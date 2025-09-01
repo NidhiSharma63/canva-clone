@@ -59,6 +59,23 @@ const GlobalStateProvider = ({ children }) => {
       setElements((prev) => [...prev, newShape]);
       return;
     }
+
+    if (type === elementsTypes.image) {
+      console.log("inserted image");
+      const newElement = {
+        id: uuidv4(),
+        type: "image",
+        url: data.url,
+        name: data.name,
+        x: e.clientX,
+        y: e.clientY,
+        width: 200,
+        height: 200,
+        rotation: 0,
+      };
+
+      setElements((prev) => [...prev, newElement]);
+    }
   };
 
   return (

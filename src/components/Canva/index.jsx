@@ -64,6 +64,15 @@ const Canvas = () => {
               />
             )}
             {el.type === elementsTypes.shape && <RenderShapes el={el} />}
+            {/* render image */}
+            {el.type === "image" && (
+              <img
+                src={el.url}
+                alt={el.name}
+                width={el.width}
+                height={el.height}
+              />
+            )}
           </div>
         ))}
 
