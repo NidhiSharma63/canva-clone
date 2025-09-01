@@ -2,10 +2,10 @@
 // import Header from "./components/Header/index.jsx";
 // import Sidebar from "./components/Sidebar/index.js";
 // import TextToolbar from "./components/TextToolbar/index.jsx";
-import Canvas from "../../components/Canva/index.jsx";
-import Header from "../../components/Header/index.jsx";
-import Sidebar from "../../components/Sidebar/index.js";
-import TextToolbar from "../../components/TextToolbar/index.jsx";
+import Canvas from "@/components/Canva/index.jsx";
+import Header from "@/components/Header/index.jsx";
+import Sidebar from "@/components/Sidebar/index.jsx";
+import TextToolbar from "@/components/TextToolbar/index.jsx";
 const dummyJson = [
   {
     id: "1",

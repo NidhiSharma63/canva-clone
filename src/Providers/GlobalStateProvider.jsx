@@ -30,6 +30,7 @@ const GlobalStateProvider = ({ children }) => {
   const handleDrop = (e) => {
     e.preventDefault();
     const dropped = JSON.parse(e.dataTransfer.getData("application/json"));
+    console.log({ dropped });
     const type = dropped.type;
     const data = dropped.data;
     if (!type) return;
@@ -38,23 +39,19 @@ const GlobalStateProvider = ({ children }) => {
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
 
-    if (
-      type === elementsTypes.h1 ||
-      type === elementsTypes.h4 ||
-      type === elementsTypes.p
-    ) {
+    if (type === elementsTypes.text) {
       const newElement = {
         id: uuidv4(),
         type,
         x,
         y,
-        content: data.content,
+        content: "<p>Edit your text</p>",
         ...textElementsConstant,
       };
-
       setElements((prev) => [...prev, newElement]);
       return;
     }
+   
 
     if (type === elementsTypes.shape) {
       const newShape = { ...data, id: uuidv4(), x, y, rotation: 0 };

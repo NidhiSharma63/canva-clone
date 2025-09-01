@@ -10,4 +10,5 @@ export const elementsTypes = {
   image: "image",
   h1: "h1",
   h4: "h4",
+  text: "text",
 };

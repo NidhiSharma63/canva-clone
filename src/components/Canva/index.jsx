@@ -73,14 +73,9 @@ const Canvas = () => {
             }}
             onClick={() => setSelectedId(el.id)}
           >
-            {(el.type === elementsTypes.h1 ||
-              el.type === elementsTypes.h4 ||
-              el.type === elementsTypes.p) && (
-              <TiptapEditorComponent
-                element={el}
-                setElements={setElements}
-                selectedId={selectedId}
-              />
+            {/* text */}
+            {el.type === elementsTypes.text && (
+              <TiptapEditorComponent element={el} setElements={setElements} />
             )}
             {el.type === elementsTypes.shape && <RenderShapes el={el} />}
             {el.type === "image" && (
