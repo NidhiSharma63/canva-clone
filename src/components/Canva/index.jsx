@@ -126,16 +126,23 @@ const Canvas = () => {
               );
             }}
             onResize={(e) => {
-              if (selectedElement.shapeId === "circle") {
+              if (
+                selectedElement.shapeId === "circle" ||
+                selectedElement.shapeId === "star"
+              ) {
                 const diameter = Math.max(e.width, e.height);
 
-                // 2️⃣ Update target size
+                // Update target size
                 e.target.style.width = `${diameter}px`;
                 e.target.style.height = `${diameter}px`;
 
-                // 3️⃣ Keep center same
-                const centerX = selectedElement.x + selectedElement.r;
-                const centerY = selectedElement.y + selectedElement.r;
+                // Keep center same
+                const centerX =
+                  selectedElement.x +
+                  (selectedElement.r || selectedElement.size / 2);
+                const centerY =
+                  selectedElement.y +
+                  (selectedElement.r || selectedElement.size / 2);
                 const newX = centerX - diameter / 2;
                 const newY = centerY - diameter / 2;
 
@@ -154,21 +161,42 @@ const Canvas = () => {
               }
             }}
             onResizeEnd={(e) => {
-              if (selectedElement.shapeId === "circle") {
+              if (
+                selectedElement.shapeId === "circle" ||
+                selectedElement.shapeId === "star"
+              ) {
                 const diameter = Math.max(
                   e.lastEvent.width,
                   e.lastEvent.height
                 );
                 const r = diameter / 2;
 
-                const centerX = selectedElement.x + selectedElement.r;
-                const centerY = selectedElement.y + selectedElement.r;
+                const centerX =
+                  selectedElement.x +
+                  (selectedElement.r || selectedElement.size / 2);
+                const centerY =
+                  selectedElement.y +
+                  (selectedElement.r || selectedElement.size / 2);
                 const newX = centerX - r;
                 const newY = centerY - r;
 
                 setElements((prev) =>
                   prev.map((el) =>
-                    el.id === selectedId ? { ...el, x: newX, y: newY, r } : el
+                    el.id === selectedId
+                      ? {
+                          ...el,
+                          x: newX,
+                          y: newY,
+                          r:
+                            selectedElement.shapeId === "circle"
+                              ? r
+                              : undefined,
+                          size:
+                            selectedElement.shapeId === "star"
+                              ? diameter
+                              : el.size,
+                        }
+                      : el
                   )
                 );
               } else {
