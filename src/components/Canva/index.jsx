@@ -5,6 +5,7 @@ import { elementsTypes } from "../../constant/Elements.js";
 import { useGlobalState } from "../../Providers/GlobalStateProvider.jsx";
 import RenderShapes from "../renderShapes/index.jsx";
 import TiptapEditorComponent from "../TiptapEditorComponent.jsx";
+
 const Canvas = () => {
   const [selectedId, setSelectedId] = useState(null);
   const positionsRef = useRef({});
@@ -14,7 +15,9 @@ const Canvas = () => {
 
   const selectedElement = elements?.find((el) => el.id === selectedId);
 
-  //  Wheel zoom listener
+  const selectedTemplate = templates.find((t) => t.id === userSelectedTemplate);
+
+  // Wheel zoom
   useEffect(() => {
     const canvas = document.getElementById("canvas-wrapper");
 
@@ -27,13 +30,10 @@ const Canvas = () => {
     };
 
     canvas.addEventListener("wheel", handleWheel, { passive: false });
-
-    return () => {
-      canvas.removeEventListener("wheel", handleWheel);
-    };
+    return () => canvas.removeEventListener("wheel", handleWheel);
   }, [scale]);
 
-  //  Delete selected element
+  // Delete selected element
   useEffect(() => {
     const handleKeyDown = (e) => {
       if ((e.key === "Delete" || e.key === "Backspace") && selectedId) {
@@ -41,17 +41,12 @@ const Canvas = () => {
         setSelectedId(null);
       }
     };
-
     window.addEventListener("keydown", handleKeyDown);
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, [selectedId, setElements]);
-  const selectedTemplate = templates.find((t) => t.id === userSelectedTemplate);
-  // console.log(elements);
+
   return (
     <div className="flex flex-1 justify-center items-center h-[90vh] bg-gray-100 overflow-hidden">
-      {/* Canvas= Wrapper with Zoom */}
       <div
         id="canvas-wrapper"
         className="relative border-2 border-dashed border-gray-400 bg-white overflow-hidden"
@@ -59,7 +54,6 @@ const Canvas = () => {
           width: `${selectedTemplate?.width || 1200}px`,
           height: `${selectedTemplate?.height || 800}px`,
           transform: `scale(${scale})`,
-          // transformOrigin: "center center",
         }}
         onDragOver={(e) => e.preventDefault()}
         onDrop={handleDrop}
@@ -73,8 +67,8 @@ const Canvas = () => {
               transform: `translate(${el.x}px, ${el.y}px) rotate(${
                 el.rotation || 0
               }deg)`,
-              width: el.width,
-              height: el.height,
+              width: el.width || el.size,
+              height: el.height || el.size,
               textAlign: el.align,
             }}
             onClick={() => setSelectedId(el.id)}
@@ -89,13 +83,10 @@ const Canvas = () => {
               />
             )}
             {el.type === elementsTypes.shape && <RenderShapes el={el} />}
-            {/* render image */}
             {el.type === "image" && (
               <img
                 src={el.url}
                 alt={el.name}
-                // width={el.width}
-                // height={el.height}
                 className="object-cover h-full w-full"
               />
             )}
@@ -109,20 +100,15 @@ const Canvas = () => {
             resizable
             rotatable
             onDrag={(e) => {
-              const x = e.beforeTranslate[0];
-              const y = e.beforeTranslate[1];
+              const [x, y] = e.beforeTranslate;
               positionsRef.current[selectedId] = { x, y };
               e.target.style.transform = `translate(${x}px, ${y}px) rotate(${
                 selectedElement.rotation || 0
               }deg)`;
-            }}
-            onDragEnd={() => {
-              const pos = positionsRef.current[selectedId];
-              if (!pos) return;
+
+              // Real-time state update
               setElements((prev) =>
-                prev.map((el) =>
-                  el.id === selectedId ? { ...el, x: pos.x, y: pos.y } : el
-                )
+                prev.map((el) => (el.id === selectedId ? { ...el, x, y } : el))
               );
             }}
             onResize={(e) => {
@@ -132,11 +118,11 @@ const Canvas = () => {
               ) {
                 const diameter = Math.max(e.width, e.height);
 
-                // Update target size
+                // Update DOM size
                 e.target.style.width = `${diameter}px`;
                 e.target.style.height = `${diameter}px`;
 
-                // Keep center same
+                // Center adjustment
                 const centerX =
                   selectedElement.x +
                   (selectedElement.r || selectedElement.size / 2);
@@ -145,41 +131,11 @@ const Canvas = () => {
                   (selectedElement.r || selectedElement.size / 2);
                 const newX = centerX - diameter / 2;
                 const newY = centerY - diameter / 2;
-
                 e.target.style.transform = `translate(${newX}px, ${newY}px) rotate(${
                   selectedElement.rotation || 0
                 }deg)`;
-              } else {
-                const { width, height } = e;
-                const [x, y] = e.drag.beforeTranslate;
 
-                e.target.style.width = `${width}px`;
-                e.target.style.height = `${height}px`;
-                e.target.style.transform = `translate(${x}px, ${y}px) rotate(${
-                  selectedElement.rotation || 0
-                }deg)`;
-              }
-            }}
-            onResizeEnd={(e) => {
-              if (
-                selectedElement.shapeId === "circle" ||
-                selectedElement.shapeId === "star"
-              ) {
-                const diameter = Math.max(
-                  e.lastEvent.width,
-                  e.lastEvent.height
-                );
-                const r = diameter / 2;
-
-                const centerX =
-                  selectedElement.x +
-                  (selectedElement.r || selectedElement.size / 2);
-                const centerY =
-                  selectedElement.y +
-                  (selectedElement.r || selectedElement.size / 2);
-                const newX = centerX - r;
-                const newY = centerY - r;
-
+                // Real-time state
                 setElements((prev) =>
                   prev.map((el) =>
                     el.id === selectedId
@@ -189,8 +145,8 @@ const Canvas = () => {
                           y: newY,
                           r:
                             selectedElement.shapeId === "circle"
-                              ? r
-                              : undefined,
+                              ? diameter / 2
+                              : el.r,
                           size:
                             selectedElement.shapeId === "star"
                               ? diameter
@@ -200,8 +156,14 @@ const Canvas = () => {
                   )
                 );
               } else {
-                const { width, height } = e.lastEvent;
-                const [x, y] = e.lastEvent.drag.beforeTranslate;
+                const { width, height } = e;
+                const [x, y] = e.drag.beforeTranslate;
+
+                e.target.style.width = `${width}px`;
+                e.target.style.height = `${height}px`;
+                e.target.style.transform = `translate(${x}px, ${y}px) rotate(${
+                  selectedElement.rotation || 0
+                }deg)`;
 
                 setElements((prev) =>
                   prev.map((el) =>
@@ -210,6 +172,7 @@ const Canvas = () => {
                 );
               }
             }}
+            onResizeEnd={() => {}}
             onRotate={(e) => {
               e.target.style.transform = `translate(${selectedElement.x}px, ${selectedElement.y}px) rotate(${e.beforeRotate}deg)`;
             }}
