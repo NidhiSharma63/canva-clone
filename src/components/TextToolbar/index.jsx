@@ -1,4 +1,11 @@
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
   AlignCenter,
   AlignLeft,
   AlignRight,
@@ -12,15 +19,19 @@ const TextToolbar = () => {
   const { editor } = useEditors();
   const [color, setColor] = useState("#000000");
   const [_, setUpdate] = useState(0);
+  const [currentFont, setCurrentFont] = useState("Roboto");
 
   useEffect(() => {
     if (!editor) return;
 
-    editor.on("transaction", () => {
-      setUpdate((u) => u + 1); // Force re-render to update editor.isactive state
-    });
+    const handleTransaction = () => {
+      // Force re-render for toolbar active states
+      setUpdate((u) => u + 1);
+    };
 
-    return () => editor.off("transaction");
+    editor.on("transaction", handleTransaction);
+
+    return () => editor.off("transaction", handleTransaction);
   }, [editor]);
 
   if (!editor) return null;
@@ -41,7 +52,21 @@ const TextToolbar = () => {
       editor.chain().focus().setNode("paragraph").run();
     }
   };
-  console.log(editor);
+
+  const fonts = [
+    "Roboto",
+    "Montserrat",
+    "Lobster",
+    "Pacifico",
+    "Dancing Script",
+    "Oswald",
+    "Raleway",
+    "Poppins",
+    "Playfair Display",
+    "Merriweather",
+    "Great Vibes",
+    "Courier Prime",
+  ];
 
   return (
     <div className="flex fixed top-[80px] left-1/2 transform -translate-x-1/2 items-center gap-2 p-2 bg-gray-50 rounded shadow-sm z-50">
@@ -50,7 +75,6 @@ const TextToolbar = () => {
         const isActive = h.level
           ? editor.isActive("heading", { level: h.level })
           : editor.isActive("paragraph");
-        // console.log(isActive);
         return (
           <button
             key={h.label}
@@ -64,24 +88,52 @@ const TextToolbar = () => {
         );
       })}
 
-      {/* number list */}
+      {/* Font Family Dropdown */}
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <p className="text-md">{currentFont} ▼</p>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent className="w-56 max-h-60 overflow-auto">
+          <DropdownMenuLabel>Select Font</DropdownMenuLabel>
+          {fonts.map((f) => (
+            <DropdownMenuItem
+              key={f}
+              onClick={() => {
+                setCurrentFont(f);
+                editor
+                  .chain()
+                  .focus()
+                  .setMark("textStyle", { fontFamily: f })
+                  .run();
+              }}
+              style={{ fontFamily: f }}
+            >
+              {f}
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuContent>
+      </DropdownMenu>
+
+      {/* Ordered List */}
       <button
         onClick={() => editor.chain().focus().toggleOrderedList().run()}
         className={`p-1 px-2 rounded transition ${
-          editor.isActive("bold") ? "bg-purple-100 text-purple-700 " : ""
+          editor.isActive("orderedList") ? "bg-purple-100 text-purple-700" : ""
         }`}
       >
         <ListOrdered size={20} className="text-gray-500" />
       </button>
-      {/* unordered list */}
+
+      {/* Unordered List */}
       <button
         onClick={() => editor.chain().focus().toggleBulletList().run()}
         className={`p-1 px-2 rounded transition ${
-          editor.isActive("bold") ? "bg-purple-100 text-purple-700 " : ""
+          editor.isActive("bulletList") ? "bg-purple-100 text-purple-700" : ""
         }`}
       >
         <List size={20} className="text-gray-500" />
       </button>
+
       {/* Bold */}
       <button
         onClick={() => editor.chain().focus().toggleBold().run()}

@@ -63,7 +63,6 @@ const GlobalStateProvider = ({ children }) => {
     }
 
     if (type === elementsTypes.image) {
-      console.log("inserted image");
       const newElement = {
         id: uuidv4(),
         type: "image",
