@@ -18,7 +18,7 @@ const extensions = [
 ];
 
 const TiptapEditorComponent = ({ element, setElements }) => {
-  const { registerEditor, unregisterEditor } = useEditors();
+  const { registerEditor, unregisterEditor, setActiveEditor } = useEditors();
   // console.log(element);
 
   const editor = useEditor({
@@ -51,11 +51,19 @@ const TiptapEditorComponent = ({ element, setElements }) => {
     },
   });
   useEffect(() => {
-    if (editor) registerEditor(editor);
+    if (editor && element?.id) registerEditor(editor, element.id);
     return () => {
-      unregisterEditor();
+      if (element?.id) unregisterEditor(element.id);
     };
-  }, [editor, registerEditor, unregisterEditor]);
+  }, [editor, element?.id, registerEditor, unregisterEditor]);
+
+  // Set active editor on focus/click
+  useEffect(() => {
+    if (!editor || !element?.id) return;
+    const handleFocus = () => setActiveEditor(element.id);
+    editor.on("focus", handleFocus);
+    return () => editor.off("focus", handleFocus);
+  }, [editor, element?.id, setActiveEditor]);
 
   return (
     <EditorContent

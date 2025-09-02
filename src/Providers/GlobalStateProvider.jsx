@@ -11,6 +11,7 @@ const GlobalStateProvider = ({ children }) => {
   const [userSelectedTemplate, setUserSelectedTemplate] = useState(
     templates[0].id
   );
+  const [selectedElement, setSelectedElement] = useState(null);
   // Save to localStorage whenever elements change
   useEffect(() => {
     if (elements.length > 0) {
@@ -84,6 +85,8 @@ const GlobalStateProvider = ({ children }) => {
         handleDrop,
         userSelectedTemplate,
         setUserSelectedTemplate,
+        selectedElement,
+        setSelectedElement,
       }}
     >
       {children}

@@ -16,42 +16,17 @@ import { useEffect, useState } from "react";
 import { useEditors } from "../../Providers/EditorProvider";
 
 const TextToolbar = () => {
-  const { editor } = useEditors();
+  const { activeEditor, activeElementId } = useEditors();
+
+  // Toolbar states
   const [color, setColor] = useState("#000000");
   const [currentFont, setCurrentFont] = useState("Roboto");
-  const [currentSize, setCurrentSize] = useState("16"); // default font size
-  const [_, setUpdate] = useState(0);
-
-  useEffect(() => {
-    if (!editor) return;
-
-    const handleTransaction = () => {
-      setUpdate((u) => u + 1);
-    };
-
-    editor.on("transaction", handleTransaction);
-
-    return () => editor.off("transaction", handleTransaction);
-  }, [editor]);
-
-  if (!editor) return null;
-
-  const headings = [
-    { label: "H1", level: 1 },
-    { label: "H2", level: 2 },
-    { label: "H3", level: 3 },
-    { label: "H4", level: 4 },
-    { label: "H5", level: 5 },
-    { label: "P", level: null },
-  ];
-
-  const toggleHeading = (level) => {
-    if (level) {
-      editor.chain().focus().setNode("heading", { level }).run();
-    } else {
-      editor.chain().focus().setNode("paragraph").run();
-    }
-  };
+  const [currentSize, setCurrentSize] = useState(16);
+  const [currentHeading, setCurrentHeading] = useState(null);
+  const [isBold, setIsBold] = useState(false);
+  const [isItalic, setIsItalic] = useState(false);
+  const [isUnderline, setIsUnderline] = useState(false);
+  const [currentAlign, setCurrentAlign] = useState("left");
 
   const fonts = [
     "Roboto",
@@ -68,42 +43,81 @@ const TextToolbar = () => {
     "Courier Prime",
   ];
 
-  const fontSizes = [
-    "12",
-    "14",
-    "16",
-    "18",
-    "20",
-    "22",
-    "24",
-    "28",
-    "32",
-    "36",
-    "48",
-    "64",
-    "72",
-    "",
+  const headings = [
+    { label: "H1", level: 1 },
+    { label: "H2", level: 2 },
+    { label: "H3", level: 3 },
+    { label: "H4", level: 4 },
+    { label: "H5", level: 5 },
+    { label: "P", level: null },
   ];
+
+  // Toggle heading
+  const toggleHeading = (level) => {
+    if (!activeEditor) return;
+    if (level) activeEditor.chain().focus().setNode("heading", { level }).run();
+    else activeEditor.chain().focus().setNode("paragraph").run();
+  };
+
+  // Sync toolbar state with editor selection / element
+  useEffect(() => {
+    if (!activeEditor) return;
+
+    const syncToolbar = () => {
+      const { state } = activeEditor;
+      const { selection } = state;
+      let align = "left";
+      let node = null;
+      // Try to get the node at selection
+      if (selection.$from) {
+        node = selection.$from.node(selection.$from.depth);
+      }
+      if (node && node.attrs && node.attrs.textAlign) {
+        align = node.attrs.textAlign;
+      } else {
+        // fallback to editor's attribute
+        const attr = activeEditor.getAttributes("textAlign");
+        if (attr && attr.textAlign) align = attr.textAlign;
+      }
+
+      const textStyle = activeEditor.getAttributes("textStyle");
+      setCurrentFont(textStyle.fontFamily || "Roboto");
+      setCurrentSize(textStyle.fontSize ? parseInt(textStyle.fontSize) : 16);
+      setColor(textStyle.color || "#000000");
+
+      const heading = activeEditor.getAttributes("heading");
+      setCurrentHeading(heading.level || null);
+
+      setIsBold(activeEditor.isActive("bold"));
+      setIsItalic(activeEditor.isActive("italic"));
+      setIsUnderline(activeEditor.isActive("underline"));
+
+      setCurrentAlign(align || "left");
+    };
+
+    syncToolbar();
+    activeEditor.on("selectionUpdate", syncToolbar);
+    return () => activeEditor.off("selectionUpdate", syncToolbar);
+  }, [activeEditor, activeElementId]);
+
+  if (!activeEditor) return null;
 
   return (
     <div className="flex fixed top-[80px] left-1/2 transform -translate-x-1/2 items-center gap-2 p-2 bg-gray-50 rounded shadow-sm z-50">
       {/* Headings / Paragraph */}
-      {headings.map((h) => {
-        const isActive = h.level
-          ? editor.isActive("heading", { level: h.level })
-          : editor.isActive("paragraph");
-        return (
-          <button
-            key={h.label}
-            onClick={() => toggleHeading(h.level)}
-            className={`p-1 px-2 rounded transition ${
-              isActive ? "bg-purple-100 text-purple-700 font-bold" : ""
-            }`}
-          >
-            {h.label}
-          </button>
-        );
-      })}
+      {/* {headings.map((h) => (
+        <button
+          key={h.label}
+          onClick={() => toggleHeading(h.level)}
+          className={`p-1 px-2 rounded transition ${
+            currentHeading === h.level
+              ? "bg-purple-100 text-purple-700 font-bold"
+              : ""
+          }`}
+        >
+          {h.label}
+        </button>
+      ))} */}
 
       {/* Font Family Dropdown */}
       <DropdownMenu>
@@ -117,7 +131,7 @@ const TextToolbar = () => {
               key={f}
               onClick={() => {
                 setCurrentFont(f);
-                editor
+                activeEditor
                   .chain()
                   .focus()
                   .setMark("textStyle", { fontFamily: f })
@@ -131,13 +145,13 @@ const TextToolbar = () => {
         </DropdownMenuContent>
       </DropdownMenu>
 
-      {/* Font Size Dropdown */}
+      {/* Font Size */}
       <div className="flex items-center gap-1">
         <button
           onClick={() => {
-            const newSize = Math.max(1, parseInt(currentSize) - 1);
-            setCurrentSize(newSize.toString());
-            editor
+            const newSize = Math.max(1, currentSize - 1);
+            setCurrentSize(newSize);
+            activeEditor
               .chain()
               .focus()
               .setMark("textStyle", { fontSize: `${newSize}px` })
@@ -152,22 +166,21 @@ const TextToolbar = () => {
           min="1"
           value={currentSize}
           onChange={(e) => {
-            const val = e.target.value;
+            const val = parseInt(e.target.value) || 1;
             setCurrentSize(val);
-            if (val)
-              editor
-                .chain()
-                .focus()
-                .setMark("textStyle", { fontSize: `${val}px` })
-                .run();
+            activeEditor
+              .chain()
+              .focus()
+              .setMark("textStyle", { fontSize: `${val}px` })
+              .run();
           }}
           className="w-14 text-center border rounded px-1 py-0.5"
         />
         <button
           onClick={() => {
-            const newSize = parseInt(currentSize) + 1;
-            setCurrentSize(newSize.toString());
-            editor
+            const newSize = currentSize + 1;
+            setCurrentSize(newSize);
+            activeEditor
               .chain()
               .focus()
               .setMark("textStyle", { fontSize: `${newSize}px` })
@@ -178,79 +191,75 @@ const TextToolbar = () => {
           +
         </button>
       </div>
-      {/* Ordered List */}
+
+      {/* Lists */}
       <button
-        onClick={() => editor.chain().focus().toggleOrderedList().run()}
+        onClick={() => activeEditor.chain().focus().toggleOrderedList().run()}
         className={`p-1 px-2 rounded transition ${
-          editor.isActive("orderedList") ? "bg-purple-100 text-purple-700" : ""
+          activeEditor.isActive("orderedList")
+            ? "bg-purple-100 text-purple-700"
+            : ""
         }`}
       >
         <ListOrdered size={20} className="text-gray-500" />
       </button>
-
-      {/* Unordered List */}
       <button
-        onClick={() => editor.chain().focus().toggleBulletList().run()}
+        onClick={() => activeEditor.chain().focus().toggleBulletList().run()}
         className={`p-1 px-2 rounded transition ${
-          editor.isActive("bulletList") ? "bg-purple-100 text-purple-700" : ""
+          activeEditor.isActive("bulletList")
+            ? "bg-purple-100 text-purple-700"
+            : ""
         }`}
       >
         <List size={20} className="text-gray-500" />
       </button>
 
-      {/* Bold */}
+      {/* Marks */}
       <button
-        onClick={() => editor.chain().focus().toggleBold().run()}
+        onClick={() => activeEditor.chain().focus().toggleBold().run()}
         className={`p-1 px-2 rounded transition ${
-          editor.isActive("bold")
-            ? "bg-purple-100 text-purple-700 font-bold"
-            : ""
+          isBold ? "bg-purple-100 text-purple-700 font-bold" : ""
         }`}
       >
         B
       </button>
-
-      {/* Italic */}
       <button
-        onClick={() => editor.chain().focus().toggleItalic().run()}
+        onClick={() => activeEditor.chain().focus().toggleItalic().run()}
         className={`p-1 px-2 rounded italic transition ${
-          editor.isActive("italic")
-            ? "bg-purple-100 text-purple-700 font-bold"
-            : ""
+          isItalic ? "bg-purple-100 text-purple-700 font-bold" : ""
         }`}
       >
         I
       </button>
-
-      {/* Underline */}
       <button
-        onClick={() => editor.chain().focus().toggleUnderline().run()}
+        onClick={() => activeEditor.chain().focus().toggleUnderline().run()}
         className={`p-1 px-2 rounded transition ${
-          editor.isActive("underline")
-            ? "bg-purple-100 text-purple-700 font-bold"
-            : ""
+          isUnderline ? "bg-purple-100 text-purple-700 font-bold" : ""
         }`}
         style={{ textDecoration: "underline" }}
       >
         U
       </button>
 
-      {/* Text Color Picker */}
+      {/* Color */}
       <input
         type="color"
         value={color}
         onChange={(e) => {
           setColor(e.target.value);
-          editor.chain().focus().setColor(e.target.value).run();
+          activeEditor.chain().focus().setColor(e.target.value).run();
         }}
         className="w-6 h-6 p-0 rounded cursor-pointer"
       />
 
-      {/* Alignment Buttons */}
+      {/* Alignment */}
       <button
-        onClick={() => editor.chain().focus().setTextAlign("left").run()}
+        onClick={() => {
+          setCurrentAlign("left");
+          activeEditor.chain().focus().setTextAlign("left").run();
+        }}
         className={`p-1 rounded transition ${
-          editor.isActive({ textAlign: "left" })
+          currentAlign === "left"
             ? "bg-purple-100 text-purple-700 font-bold"
             : ""
         }`}
@@ -258,9 +267,12 @@ const TextToolbar = () => {
         <AlignLeft className="text-gray-500" />
       </button>
       <button
-        onClick={() => editor.chain().focus().setTextAlign("center").run()}
+        onClick={() => {
+          setCurrentAlign("center");
+          activeEditor.chain().focus().setTextAlign("center").run();
+        }}
         className={`p-1 rounded transition ${
-          editor.isActive({ textAlign: "center" })
+          currentAlign === "center"
             ? "bg-purple-100 text-purple-700 font-bold"
             : ""
         }`}
@@ -268,9 +280,12 @@ const TextToolbar = () => {
         <AlignCenter className="text-gray-500" />
       </button>
       <button
-        onClick={() => editor.chain().focus().setTextAlign("right").run()}
+        onClick={() => {
+          setCurrentAlign("right");
+          activeEditor.chain().focus().setTextAlign("right").run();
+        }}
         className={`p-1 rounded transition ${
-          editor.isActive({ textAlign: "right" })
+          currentAlign === "right"
             ? "bg-purple-100 text-purple-700 font-bold"
             : ""
         }`}

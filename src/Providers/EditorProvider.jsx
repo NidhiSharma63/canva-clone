@@ -5,19 +5,35 @@ const EditorContext = createContext();
 export const useEditors = () => useContext(EditorContext);
 
 const EditorProvider = ({ children }) => {
-  const [editor, setEditor] = useState(null); // { elementId: editor }
+  const [editors, setEditors] = useState({}); // { [elementId]: editor }
+  const [activeElementId, setActiveElementId] = useState(null);
 
-  const registerEditor = useCallback((editor) => {
-    setEditor(editor);
+  const registerEditor = useCallback((editor, elementId) => {
+    setEditors((prev) => ({ ...prev, [elementId]: editor }));
   }, []);
 
-  const unregisterEditor = useCallback(() => {
-    setEditor(null);
+  const unregisterEditor = useCallback((elementId) => {
+    setEditors((prev) => {
+      const copy = { ...prev };
+      delete copy[elementId];
+      return copy;
+    });
+  }, []);
+
+  const setActiveEditor = useCallback((elementId) => {
+    setActiveElementId(elementId);
   }, []);
 
   return (
     <EditorContext.Provider
-      value={{ editor, registerEditor, unregisterEditor }}
+      value={{
+        editors,
+        activeElementId,
+        activeEditor: editors[activeElementId],
+        registerEditor,
+        unregisterEditor,
+        setActiveEditor,
+      }}
     >
       {children}
     </EditorContext.Provider>

@@ -10,12 +10,24 @@ const Canvas = () => {
   const [selectedId, setSelectedId] = useState(null);
   const positionsRef = useRef({});
   const [scale, setScale] = useState(1);
-  const { elements, handleDrop, setElements, userSelectedTemplate } =
-    useGlobalState();
+  const {
+    elements,
+    handleDrop,
+    setElements,
+    userSelectedTemplate,
+    setSelectedElement,
+  } = useGlobalState();
 
   const selectedElement = elements?.find((el) => el.id === selectedId);
 
   const selectedTemplate = templates.find((t) => t.id === userSelectedTemplate);
+
+  /**
+   * set Selected Element
+   */
+  useEffect(() => {
+    setSelectedElement(selectedElement);
+  }, [selectedElement, setSelectedElement]);
 
   // Wheel zoom
   useEffect(() => {
@@ -36,7 +48,7 @@ const Canvas = () => {
   // Delete selected element
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if ((e.key === "Delete" || e.key === "Backspace") && selectedId) {
+      if (e.key === "Delete" && selectedId) {
         setElements((prev) => prev.filter((el) => el.id !== selectedId));
         setSelectedId(null);
       }
