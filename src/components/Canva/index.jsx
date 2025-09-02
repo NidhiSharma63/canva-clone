@@ -66,9 +66,16 @@ const Canvas = () => {
           width: `${selectedTemplate?.width || 1200}px`,
           height: `${selectedTemplate?.height || 800}px`,
           transform: `scale(${scale})`,
+          transformOrigin: "50% 50%",
         }}
         onDragOver={(e) => e.preventDefault()}
         onDrop={handleDrop}
+        onClick={(e) => {
+          // Deselect if clicking directly on the canvas-wrapper (not a child)
+          if (e.target === e.currentTarget) {
+            setSelectedId(null);
+          }
+        }}
       >
         {elements?.map((el) => (
           <div
