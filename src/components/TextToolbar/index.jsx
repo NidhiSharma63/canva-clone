@@ -27,6 +27,7 @@ const TextToolbar = () => {
   const [isItalic, setIsItalic] = useState(false);
   const [isUnderline, setIsUnderline] = useState(false);
   const [currentAlign, setCurrentAlign] = useState("left");
+  const [listType, setListType] = useState(null);
 
   const fonts = [
     "Roboto",
@@ -59,6 +60,7 @@ const TextToolbar = () => {
     else activeEditor.chain().focus().setNode("paragraph").run();
   };
 
+  // Sync toolbar state with editor selection / element
   // Sync toolbar state with editor selection / element
   useEffect(() => {
     if (!activeEditor) return;
@@ -94,6 +96,9 @@ const TextToolbar = () => {
 
       setCurrentAlign(align || "left");
     };
+
+    // Expose syncToolbar for use in button handlers
+    activeEditor.syncToolbar = syncToolbar;
 
     syncToolbar();
     activeEditor.on("selectionUpdate", syncToolbar);
@@ -194,22 +199,62 @@ const TextToolbar = () => {
 
       {/* Lists */}
       <button
-        onClick={() => activeEditor.chain().focus().toggleOrderedList().run()}
-        className={`p-1 px-2 rounded transition ${
-          activeEditor.isActive("orderedList")
-            ? "bg-purple-100 text-purple-700"
-            : ""
-        }`}
+        onClick={() => {
+          activeEditor.chain().focus().toggleOrderedList().run();
+          setListType("orderedList");
+          setTimeout(() => {
+            if (activeEditor.syncToolbar) activeEditor.syncToolbar();
+            activeEditor.emit && activeEditor.emit("selectionUpdate");
+          }, 0);
+        }}
+        className={`p-1 px-2 rounded transition ${(() => {
+          const { state } = activeEditor;
+          const { selection } = state;
+          let isOrdered = false;
+          for (let d = selection.$from.depth; d > 0; d--) {
+            const node = selection.$from.node(d);
+            if (node.type.name === "orderedList") {
+              isOrdered = true;
+              break;
+            }
+          }
+          return isOrdered ||
+            activeEditor.isActive("orderedList") ||
+            activeEditor.isActive("listItem", { type: "orderedList" }) ||
+            listType === "orderedList"
+            ? "bg-purple-100 text-purple-700 font-bold"
+            : "";
+        })()}`}
       >
         <ListOrdered size={20} className="text-gray-500" />
       </button>
       <button
-        onClick={() => activeEditor.chain().focus().toggleBulletList().run()}
-        className={`p-1 px-2 rounded transition ${
-          activeEditor.isActive("bulletList")
-            ? "bg-purple-100 text-purple-700"
-            : ""
-        }`}
+        onClick={() => {
+          activeEditor.chain().focus().toggleBulletList().run();
+          setListType("bulletList");
+          setTimeout(() => {
+            if (activeEditor.syncToolbar) activeEditor.syncToolbar();
+            activeEditor.emit && activeEditor.emit("selectionUpdate");
+          }, 0);
+        }}
+        className={`p-1 px-2 rounded transition ${(() => {
+          const { state } = activeEditor;
+          const { selection } = state;
+          let isBullet = false;
+          for (let d = selection.$from.depth; d > 0; d--) {
+            const node = selection.$from.node(d);
+            if (node.type.name === "bulletList") {
+              isBullet = true;
+              break;
+            }
+          }
+          return isBullet ||
+            activeEditor.isActive("bulletList") ||
+            activeEditor.isActive("listItem", { type: "bulletList" }) ||
+            listType === "bulletList"
+            ? "bg-purple-100 text-purple-700 font-bold"
+            : "";
+        })()}`}
       >
         <List size={20} className="text-gray-500" />
       </button>
